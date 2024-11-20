@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styleslogin.css" type="text/css">
+    <title>Login</title>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Column for Login Form -->
+        <div class="left-column">
+            <div class="centered">
+                <h1>Minerva's Cleaning Service</h1>
+            </div>
+            <fieldset>
+                <div class="centered">
+                    <h2>User Login</h2>
+                </div>
+                <form action="/login" method="post">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" value="">
+
+                    <label for="password">Password</label>
+                    <input type="text" name="password" id="password" value="">
+                    
+                    <button type="submit">Login</button>
+                </form>
+            </fieldset>
+            <br>
+            <div class="centered">
+                <a href="/">Return Home</a>
+            </div>
+        </div>
+
+        <!-- Right Column for Logo/Image -->
+        <div class="right-column">
+            <img src="/images/logo.png" alt="Logo">
+        </div>
+    </div>
+</body>
+</html>

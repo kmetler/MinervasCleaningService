@@ -1,0 +1,148 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: #F9F9F9;
+    color: #333;
+}
+
+header {
+    background-color: #5BB8C1;
+    color: white;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+header .logo h1 {
+    font-size: 36px;
+    font-weight: bold;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+.login-button button {
+    background-color: #5CA838;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.login-button button:hover {
+    background-color: #3C8D32;
+}
+
+/* Landing Section */
+#landing {
+    background-color: #0E3C5C;
+    color: white;
+    text-align: center;
+    padding: 80px 20px;
+}
+
+#landing h2 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+#landing p {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+/* Section Styles */
+.section {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.section h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.section p {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+.section a {
+    font-size: 18px;
+    margin-top: 10px;
+    color: #333
+}
+
+/* Services List */
+.services-list {
+    list-style: none;
+    font-size: 18px;
+    padding: 0;
+}
+
+.services-list li {
+    padding: 10px;
+    background-color: #5BB8C1;
+    margin: 8px 0;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer */
+footer {
+    background-color: #0E3C5C;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 16px;
+}
+
+footer p {
+    margin-top: 10px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+    #landing h2 {
+        font-size: 36px;
+    }
+    #landing p {
+        font-size: 18px;
+    }
+}

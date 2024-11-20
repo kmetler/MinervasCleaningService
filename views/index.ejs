@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minerva's Cleaning Service</title>
+    <link rel="stylesheet" href="/css/styleslanding.css" type="text/css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="logo">
+            <h1>Minerva's Cleaning Service</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#about">Who We Are</a></li>
+                <li><a href="#services">Our Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <form action="/showLogin" method="get" class="login-button">
+            <button>Login</button>
+        </form>
+    </header>
+    <!-- Landing Section -->
+    <section id="landing">
+        <div class="landing-content">
+            <h2>Welcome to Minerva's Cleaning Service</h2>
+            <p>Expert cleaning services tailored to your needs. Serving Arlington and DC.</p>
+        </div>
+    </section>
+    <!-- About Us Section -->
+    <section id="about" class="section">
+        <h2>Who We Are</h2>
+        <p>Minerva's Cleaning Service is a trusted cleaning company dedicated to providing top-notch services to our clients in Arlington and Washington, D.C. Our team is committed to delivering a spotless, safe, and hygienic environment in your home or business.</p>
+    </section>
+    <!-- Services Section -->
+    <section id="services" class="section">
+        <h2>Our Services</h2>
+        <ul class="services-list">
+            <% types.forEach(type => { %>
+                <li><%= type.typename %></li>
+            <% }); %>
+        </ul>
+    </section>
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <h2>Contact Us</h2>
+        <a href="mailto:minervascleaning703@gmail.com">minervascleaning703@gmail.com</a>
+        <p>703-835-0518</p>
+    </section>
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 Minerva's Cleaning Service. Serving Arlington and Washington, D.C.</p>
+    </footer>
+</body>
+</html>
