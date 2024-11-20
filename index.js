@@ -4,7 +4,7 @@ let app = express();
 
 let path = require("path");
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 app.set("view engine", "ejs");
 
