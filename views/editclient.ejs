@@ -37,7 +37,7 @@
                 </div>
                 <div>
                     <label for="clientphone">Phone:</label>
-                    <input type="text" id="clientphone" name="clientphone" value="<%= client.clientphone %>" required>
+                    <input type="tel" id="clientphone" name="clientphone" value="<%= client.clientphone %>" placeholder="Enter phone (123-456-7890)" pattern="^\d{3}-\d{3}-\d{4}$" required>
                 </div>
                 <div>
                     <label for="clientemail">Email:</label>

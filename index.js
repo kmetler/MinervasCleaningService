@@ -126,11 +126,11 @@ app.post('/signupclient', async (req, res) => {
 
     try {
         await knex('client').insert({
-            clientfirst,
-            clientlast,
-            clientstreetaddress,
-            clientcity,
-            clientstate,
+            clientfirst: clientfirst.toUpperCase(),
+            clientlast: clientlast.toUpperCase(),
+            clientstreetaddress: clientstreetaddress.toUpperCase(),
+            clientcity: clientcity.toUpperCase(),
+            clientstate: clientstate.toUpperCase(),
             clientzipcode,
             clientphone,
             clientemail
@@ -153,11 +153,11 @@ app.get('/adminlanding', isAuthenticated, (req, res) => {
 app.get('/clientinfo', isAuthenticated, async (req, res) => {
     try {
         const clients = await knex('client')
-            .join('orders', 'client.clientid', '=', 'orders.clientid')
-            .join('recurringschedule', 'orders.recurringid', '=', 'recurringschedule.recurringid')
-            .join('services', 'orders.serviceid', '=', 'services.serviceid')
-            .join('type', 'services.typeid', '=', 'type.typeid')
-            .join('building', 'services.buildingid', '=', 'building.buildingid')
+            .leftJoin('orders', 'client.clientid', '=', 'orders.clientid')
+            .leftJoin('recurringschedule', 'orders.recurringid', '=', 'recurringschedule.recurringid')
+            .leftJoin('services', 'orders.serviceid', '=', 'services.serviceid')
+            .leftJoin('type', 'services.typeid', '=', 'type.typeid')
+            .leftJoin('building', 'services.buildingid', '=', 'building.buildingid')
             .select(
                 'client.clientid',
                 'clientfirst',
@@ -355,9 +355,139 @@ app.post('/clients/edit/:clientid', isAuthenticated, async (req, res) => {
     }
 });
 
-// Go to calender
-
 // go to user info
+app.get('/usercredentials', isAuthenticated, async (req, res) => {
+    try {
+        const users = await knex('usercredentials')
+            .select(
+                'userid',
+                'userfirstname',
+                'userlastname',
+                'userphone',
+                'useremail',
+                'username',
+                'password'
+            );
 
+        // Apply toProperCase to relevant string fields
+        const formattedUsers = users.map(user => ({
+            userid: user.userid, // Keep numeric fields as they are
+            userfirstname: toProperCase(user.userfirstname),
+            userlastname: toProperCase(user.userlastname),
+            userphone: user.userphone, // Leave non-string fields untouched
+            useremail: user.useremail,
+            username: user.username,
+            password: user.password // Normally passwords wouldn't be displayed
+        }));
+
+        res.render('usercredentials', { users: formattedUsers });
+    }
+    catch (error) {
+        console.error('Error retrieving user credentials:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// edit user information
+app.get('/edituser/:userid', isAuthenticated, async (req, res) => {
+    const userid = req.params.userid;
+
+    try {
+        const user = await knex('usercredentials')
+            .where({ userid: userid})
+            .first();
+            
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        // Apply toProperCase to relevant string fields
+        const formattedUser = {
+            userid: user.userid, // Keep numeric fields unchanged
+            userfirstname: toProperCase(user.userfirstname),
+            userlastname: toProperCase(user.userlastname),
+            userphone: user.userphone, // Phone numbers are not transformed
+            useremail: user.useremail,
+            username: user.username, // Optionally format usernames if needed
+            password: user.password // Password handling; typically not displayed directly
+        };
+        
+        res.render('edituser', { user: formattedUser });
+    } catch (error) {
+        console.error('Error retreiving user:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.post('/edituser/:userid', isAuthenticated, async (req, res) => {
+    const userid = req.params.userid;
+
+    const { userfirstname, userlastname, userphone, useremail, username, password } = req.body;
+
+    try {
+        await knex('usercredentials')
+            .where('userid', userid)
+            .update({
+                userfirstname: userfirstname.toUpperCase(),
+                userlastname: userlastname.toUpperCase(),
+                userphone: userphone,
+                useremail: useremail,
+                username: username,
+                password: password,
+            });
+        
+        res.redirect('/usercredentials');
+    } catch (error) {
+        console.error('Error updating user:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// delete user
+app.post('/deleteuser/:userid', isAuthenticated, async (req, res) => {
+    const userid = req.params.userid;
+  
+    try {
+        const user = await knex('usercredentials')
+            .where('userid', userid)
+            .del();
+
+            res.redirect('/usercredentials');
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// go to add user page
+app.get('/addUser', isAuthenticated, (req, res) => {
+    res.render('addUser');
+})
+
+// save added user
+app.post('/addUser', isAuthenticated, async (req, res) => {
+    const userfirstname = req.body.userfirstname || '';
+    const userlastname = req.body.userlastname || '';
+    const userphone = req.body.userphone || '';
+    const useremail = req.body.useremail || '';
+    const username = req.body.username || '';
+    const password = req.body.password || '';
+
+    try {
+        await knex('usercredentials')
+        .insert({
+            userfirstname: userfirstname.toUpperCase(),
+            userlastname: userlastname.toUpperCase(),
+            userphone: userphone,
+            useremail: useremail,
+            username: username,
+            password: password,
+        });
+        res.redirect('/usercredentials');
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).send('Internal Server Error');
+    }
+})
 
 app.listen(port, () => console.log("Express App has started listening."));

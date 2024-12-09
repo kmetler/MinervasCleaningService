@@ -7,46 +7,47 @@
 </head>
 <body>
     <main>
-        <h1>Edit User</h1>
-        <form action="/edituser/<%= user.userid %>" method="POST">
+        <h1>Add User</h1>
+        <form action="/addUser" method="POST">
             <div class="form-group">
                 <label for="userfirstname">First Name</label>
-                <input type="text" id="userfirstname" name="userfirstname" value="<%= user.userfirstname %>" required>
+                <input type="text" id="userfirstname" name="userfirstname" required>
             </div>
 
             <div class="form-group">
                 <label for="userlastname">Last Name</label>
-                <input type="text" id="userlastname" name="userlastname" value="<%= user.userlastname %>" required>
+                <input type="text" id="userlastname" name="userlastname" required>
             </div>
 
             <div class="form-group">
                 <label for="userphone">Phone</label>
-                <input type="tel" id="userphone" name="userphone" placeholder="Enter phone (123-456-7890)" pattern="^\d{3}-\d{3}-\d{4}$" value="<%= user.userphone %>" required>
+                <input type="tel" id="userphone" name="userphone" placeholder="Enter phone (123-456-7890)" pattern="^\d{3}-\d{3}-\d{4}$" required>
             </div>
 
             <div class="form-group">
                 <label for="useremail">Email</label>
-                <input type="email" id="useremail" name="useremail" value="<%= user.useremail %>" required>
+                <input type="email" id="useremail" name="useremail" required>
             </div>
 
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" id="username" name="username" value="<%= user.username %>" required>
+                <input type="text" id="username" name="username" required>
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" value="<%= user.password %>" required>
+                <input type="password" id="password" name="password" required>
             </div>
 
+
             <div class="form-group">
-                <button type="submit">Save Changes</button>
+                <button type="submit">Add User</button>
             </div>
         </form>
 
-        <!-- Cancel Edit (optional) -->
+        <!-- Cancel Add (optional) -->
         <div class="go-back-btn">
-            <form action="/usercredentials" method="GET">
+            <form action="/userinfo" method="GET">
                 <button type="submit" class="cancel-button">Cancel</button>
             </form>
         </div>

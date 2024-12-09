@@ -29,15 +29,15 @@
                 </div>
                 <div>
                     <label for="clientstate">State:</label>
-                    <input type="text" id="clientstate" name="clientstate" placeholder="Enter state" required>
+                    <input maxlength="2" type="text" id="clientstate" name="clientstate" placeholder="Enter state (VA)" required>
                 </div>
                 <div>
                     <label for="clientzipcode">Zip Code:</label>
-                    <input type="text" id="clientzipcode" name="clientzipcode" placeholder="Enter zip code" required>
+                    <input type="number" id="clientzipcode" name="clientzipcode" placeholder="Enter zip code" required>
                 </div>
                 <div>
                     <label for="clientphone">Phone:</label>
-                    <input type="text" id="clientphone" name="clientphone" placeholder="Enter phone number" required>
+                    <input type="tel" id="clientphone" name="clientphone" placeholder="Enter phone (123-456-7890)" pattern="^\d{3}-\d{3}-\d{4}$" required>
                 </div>
                 <div>
                     <label for="clientemail">Email:</label>
