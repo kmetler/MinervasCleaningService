@@ -54,11 +54,14 @@ function toProperCase(str) {
     );
 }
 
+// ** Public Routes **
+// go to landing
 app.get("/", async (req,res) => {
     const types = await knex.select('typename').from('type');
     res.render("index", {types});
 });
 
+// go to login
 app.get("/showLogin", (req, res) => res.render("login"));
 
 // route to check authentication for login
@@ -102,5 +105,15 @@ app.get('/logout', (req, res) => {
         res.redirect('/');
     });
 });
+
+// ** Authenticated Routes **
+// Go to admin landing page
+app.get('/adminlanding', isAuthenticated, (req, res) => {
+    res.render('adminlanding', { user: req.session.user }); // Authenticated landing page
+});
+
+// Go to client page
+
+// Go to calender
 
 app.listen(port, () => console.log("Express App has started listening."));
