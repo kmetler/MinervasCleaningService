@@ -38,6 +38,22 @@ const knex = require("knex") ({
     }
 });
 
+// Authentication Middleware
+function isAuthenticated(req, res, next) {
+    if (!req.session.isAuthenticated) {
+        return res.redirect('/login'); // Redirect unauthenticated user to the login page
+    }
+    next(); // Allow access to the next middleware or route handler
+}
+
+// function to make displayed data as proper case
+function toProperCase(str) {
+    if (!str) return ''; // Handle null or undefined
+    return str.replace(/\w\S*/g, word =>
+        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    );
+}
+
 app.get("/", async (req,res) => {
     const types = await knex.select('typename').from('type');
     res.render("index", {types});
@@ -45,24 +61,46 @@ app.get("/", async (req,res) => {
 
 app.get("/showLogin", (req, res) => res.render("login"));
 
-app.post("/login", async (req, res) => {
-    const { username, password } = req.body
+// route to check authentication for login
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
 
     try {
-        const credentials = await knex('credentials')
+        // Query the user table to find the record
+        const credentials = await knex('usercredentials')
             .select('*')
-            .where({ username, password }) //Replace with hashedpassword comparison in prodection
+            .where({ username, password }) // replace with hashed password comparison in production
             .first();
-        if (credentials) {
-            req.session.isAuthenticated = true; // set session authentication flag
-        } else {
-            req.session.isAuthenticated = false; // clear authenticaion flag
+        if (!credentials) {
+            // User not found
+            req.session.isAuthenticated = false;
+            return res.status(401).render('login', { error: 'Invalid username or password.'});
         }
-    } catch (error) {
-        console.error("Error during login:", error);
-        res.status(500).send("Database query failed:" + error.message);
+        // Verify the password
+        if (credentials.password !== password) {
+            req.session.isAuthenticated = false; // set session authentication flag
+            res.status(401).render('login', { error: 'Invalid username or password.'})
+        }
+        
+        // Successful login
+        req.session.isAuthenticated = true;
+        res.redirect('adminlanding')
     }
-    res.render("clientpage");
+    catch (error) {
+        console.error('Error during login:', error);
+        res.status(500).send('Internal Server Error');
+    } 
+});
+
+// route to logout and go home
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error during logout:', err);
+            return res.status(500).send('Could not log out. Try again.');
+        }
+        res.redirect('/');
+    });
 });
 
 app.listen(port, () => console.log("Express App has started listening."));
