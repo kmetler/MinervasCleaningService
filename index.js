@@ -62,7 +62,7 @@ app.get("/", async (req,res) => {
 });
 
 // go to login
-app.get("/showLogin", (req, res) => res.render("login"));
+app.get("/login", (req, res) => res.render("login"));
 
 // route to check authentication for login
 app.post('/login', async (req, res) => {
@@ -106,6 +106,43 @@ app.get('/logout', (req, res) => {
     });
 });
 
+// Show the form to signup as new client
+app.get('/signupclient', (req, res) => {
+    res.render('signupclient'); // Create an `addclient.ejs` template
+});
+
+// Submit new client
+app.post('/signupclient', async (req, res) => {
+    const {
+        clientfirst,
+        clientlast,
+        clientstreetaddress,
+        clientcity,
+        clientstate,
+        clientzipcode,
+        clientphone,
+        clientemail
+    } = req.body;
+
+    try {
+        await knex('client').insert({
+            clientfirst,
+            clientlast,
+            clientstreetaddress,
+            clientcity,
+            clientstate,
+            clientzipcode,
+            clientphone,
+            clientemail
+        });
+
+        res.redirect('/'); // Redirect to the client list page after adding
+    } catch (error) {
+        console.error('Error submitting client:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 // ** Authenticated Routes **
 // Go to admin landing page
 app.get('/adminlanding', isAuthenticated, (req, res) => {
@@ -114,69 +151,209 @@ app.get('/adminlanding', isAuthenticated, (req, res) => {
 
 // Go to client page
 app.get('/clientinfo', isAuthenticated, async (req, res) => {
-    const client = await knex('client')
-        .join('order', 'client.clientid', '=', 'order.clientid')
-        .join('recurringschedule', 'order.recurringid', '=', 'recurringschedule.recurringid')
-        .join('services', 'order.serviceid', '=', 'services.serviceid')
-        .join('type', 'services.typeid', '=', 'type.typeid')
-        .join('building', 'services.buildingid', '=', 'building.buildingid')
-        .select(
-            'clientfirst',
-            'clientlast',
-            'transactiondate',
-            'frequency',
-            'buildingtype',
-            'typename',
-            'price',
-            'status'
-        )
-        .then(clients => {
-            if (!clients || clients.length === 0) {
-                return res.status(404).send('Client not found');
-            }
+    try {
+        const clients = await knex('client')
+            .join('orders', 'client.clientid', '=', 'orders.clientid')
+            .join('recurringschedule', 'orders.recurringid', '=', 'recurringschedule.recurringid')
+            .join('services', 'orders.serviceid', '=', 'services.serviceid')
+            .join('type', 'services.typeid', '=', 'type.typeid')
+            .join('building', 'services.buildingid', '=', 'building.buildingid')
+            .select(
+                'client.clientid',
+                'clientfirst',
+                'clientlast',
+                'transactiondate',
+                'frequency',
+                'buildingtype',
+                'typename',
+                'price',
+                'status'
+            );
 
-            const client = clients[0];
+        if (!clients || clients.length === 0) {
+            return res.status(404).send('No clients found');
+        }
 
-            // Convert strings to proper case
+        // Convert all client strings to proper case
+        clients.forEach(client => {
             Object.keys(client).forEach(key => {
                 if (typeof client[key] === 'string') {
                     client[key] = toProperCase(client[key]);
                 }
             });
-
-            res.render('clientinfo', {client: {...client}});
-        })
-        .catch(error => {
-            console.error('Error querying database:', error);
-            res.status(500).send('Internal Server Error')
         });
+
+        res.render('clientinfo', { clients }); // Pass the entire array
+    } catch (error) {
+        console.error('Error querying database:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 // go to client details for specific client
 app.get('/clientdetails/:clientid', isAuthenticated, async (req, res) => {
-    const {clientid} = req.params;
-    try{
-        // get all client details
+    const { clientid } = req.params;
+
+    try {
+        // Get all details for the specific client
         const client = await knex('client')
-        .join('order', 'client.clientid', '=', 'order.clientid')
-        .join('recurringschedule', 'order.recurringid', '=', 'recurringschedule.recurringid')
-        .join('services', 'order.serviceid', '=', 'services.serviceid')
-        .join('type', 'services.typeid', '=', 'type.typeid')
-        .join('building', 'services.buildingid', '=', 'building.buildingid')
-        .where('clientid', clientid)
-        .select(
-            'clientfirst',
-            'clientlast',
-            'transactiondate',
-            'frequency',
-            'buildingtype',
-            'typename',
-            'price',
-            'status'
-        )
-        .first();
+            .join('orders', 'client.clientid', '=', 'orders.clientid')
+            .join('recurringschedule', 'orders.recurringid', '=', 'recurringschedule.recurringid')
+            .join('services', 'orders.serviceid', '=', 'services.serviceid')
+            .join('type', 'services.typeid', '=', 'type.typeid')
+            .join('building', 'services.buildingid', '=', 'building.buildingid')
+            .where('client.clientid', clientid)
+            .select(
+                'clientfirst',
+                'clientlast',
+                'clientstreetaddress',
+                'clientcity',
+                'clientstate',
+                'clientzipcode',
+                'clientphone',
+                'clientemail',
+                'transactiondate',
+                'frequency',
+                'buildingtype',
+                'typename',
+                'price',
+                'status'
+            )
+            .first();
+
+        if (!client) {
+            return res.status(404).send('Client not found');
+        }
+
+        // Convert all string fields to proper case
+        Object.keys(client).forEach(key => {
+            if (typeof client[key] === 'string' && key !== 'clientemail' && key !== 'clientstate') {
+                client[key] = toProperCase(client[key]);
+            }
+        });
+
+        res.render('clientdetails', { client });
+    } catch (error) {
+        console.error('Error querying database:', error);
+        res.status(500).send('Internal Server Error');
     }
-})
+});
+
+// Delete a client by ID from client details page
+app.post('/clientdetails/delete/:clientid', isAuthenticated, async (req, res) => {
+    const { clientid } = req.params;
+
+    try {
+        const deletedCount = await knex('client')
+            .where('clientid', clientid)
+            .del();
+
+        if (deletedCount === 0) {
+            return res.status(404).send('Client not found');
+        }
+
+        res.redirect('/clients'); // Redirect to the client list after deletion
+    } catch (error) {
+        console.error('Error deleting client:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Show the form to add a new client
+app.get('/clients/add', isAuthenticated, (req, res) => {
+    res.render('addclient'); // Create an `addclient.ejs` template
+});
+
+// Add a new client
+app.post('/clients/add', isAuthenticated, async (req, res) => {
+    const {
+        clientfirst,
+        clientlast,
+        clientstreetaddress,
+        clientcity,
+        clientstate,
+        clientzipcode,
+        clientphone,
+        clientemail
+    } = req.body;
+
+    try {
+        await knex('client').insert({
+            clientfirst,
+            clientlast,
+            clientstreetaddress,
+            clientcity,
+            clientstate,
+            clientzipcode,
+            clientphone,
+            clientemail
+        });
+
+        res.redirect('/clients'); // Redirect to the client list page after adding
+    } catch (error) {
+        console.error('Error adding client:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Show the form to edit a client
+app.get('/clients/edit/:clientid', isAuthenticated, async (req, res) => {
+    const { clientid } = req.params;
+
+    try {
+        const client = await knex('client')
+            .where('clientid', clientid)
+            .first();
+
+        if (!client) {
+            return res.status(404).send('Client not found');
+        }
+
+        res.render('editclient', { client }); // Create an `editclient.ejs` template
+    } catch (error) {
+        console.error('Error fetching client:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Update a client's information
+app.post('/clients/edit/:clientid', isAuthenticated, async (req, res) => {
+    const { clientid } = req.params;
+    const {
+        clientfirst,
+        clientlast,
+        clientstreetaddress,
+        clientcity,
+        clientstate,
+        clientzipcode,
+        clientphone,
+        clientemail
+    } = req.body;
+
+    try {
+        const updatedCount = await knex('client')
+            .where('clientid', clientid)
+            .update({
+                clientfirst,
+                clientlast,
+                clientstreetaddress,
+                clientcity,
+                clientstate,
+                clientzipcode,
+                clientphone,
+                clientemail
+            });
+
+        if (updatedCount === 0) {
+            return res.status(404).send('Client not found');
+        }
+
+        res.redirect('/clients'); // Redirect to the client list page after editing
+    } catch (error) {
+        console.error('Error updating client:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 // Go to calender
 

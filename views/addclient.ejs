@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Client</title>
+</head>
+<body>
+    <main>
+        <h1 style="text-align: center; font-size: 40px;">Add New Client</h1>
+        <form action="/clientdetails/add" method="POST">
+            <section>
+                <h2>Client Information</h2>
+                <div>
+                    <label for="clientfirst">First Name:</label>
+                    <input type="text" id="clientfirst" name="clientfirst" placeholder="Enter first name" required>
+                </div>
+                <div>
+                    <label for="clientlast">Last Name:</label>
+                    <input type="text" id="clientlast" name="clientlast" placeholder="Enter last name" required>
+                </div>
+                <div>
+                    <label for="clientstreetaddress">Street Address:</label>
+                    <input type="text" id="clientstreetaddress" name="clientstreetaddress" placeholder="Enter street address" required>
+                </div>
+                <div>
+                    <label for="clientcity">City:</label>
+                    <input type="text" id="clientcity" name="clientcity" placeholder="Enter city" required>
+                </div>
+                <div>
+                    <label for="clientstate">State:</label>
+                    <input type="text" id="clientstate" name="clientstate" placeholder="Enter state" required>
+                </div>
+                <div>
+                    <label for="clientzipcode">Zip Code:</label>
+                    <input type="text" id="clientzipcode" name="clientzipcode" placeholder="Enter zip code" required>
+                </div>
+                <div>
+                    <label for="clientphone">Phone:</label>
+                    <input type="text" id="clientphone" name="clientphone" placeholder="Enter phone number" required>
+                </div>
+                <div>
+                    <label for="clientemail">Email:</label>
+                    <input type="email" id="clientemail" name="clientemail" placeholder="Enter email address" required>
+                </div>
+            </section>
+            <button type="submit">Add Client</button>
+            <button type="button" onclick="window.location.href='/clients';">Cancel</button>
+        </form>
+    </main>
+</body>
+</html>

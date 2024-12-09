@@ -8,7 +8,7 @@
 <body>
     <h1>Client Information</h1>
 
-    <table border="1">
+    <table>
         <thead>
             <tr>
                 <th>First Name</th>
@@ -19,26 +19,40 @@
                 <th>Service Type</th>
                 <th>Price</th>
                 <th>Status</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            <% if (client) { %>
-                <tr>
-                    <td><%= client.clientfirst %></td>
-                    <td><%= client.clientlast %></td>
-                    <td><%= client.transactiondate %></td>
-                    <td><%= client.frequency %></td>
-                    <td><%= client.buildingtype %></td>
-                    <td><%= client.typename %></td>
-                    <td><%= client.price %></td>
-                    <td><%= client.status %></td>
-                </tr>
+            <% if (clients && clients.length > 0) { %>
+                <% clients.forEach(client => { %>
+                    <tr>
+                        <td><%= client.clientfirst %></td>
+                        <td><%= client.clientlast %></td>
+                        <td><%= client.transactiondate %></td>
+                        <td><%= client.frequency %></td>
+                        <td><%= client.buildingtype %></td>
+                        <td><%= client.typename %></td>
+                        <td><%= client.price %></td>
+                        <td><%= client.status %></td>
+                        <td>
+                            <form action="/clientdetails/<%= client.clientid %>" method="get">
+                                <button type="submit">See More</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
             <% } else { %>
                 <tr>
-                    <td colspan="8">No client information available.</td>
+                    <td colspan="9">No client information available.</td>
                 </tr>
             <% } %>
         </tbody>
     </table>
+
+    <br>
+
+    <form action="/adminlanding" method="get">
+        <button type="submit">Admin Landing Page</button>
+    </form>
 </body>
 </html>

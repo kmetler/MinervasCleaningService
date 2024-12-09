@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Client</title>
+</head>
+<body>
+    <main>
+        <h1 style="text-align: center; font-size: 40px;">Edit Client Details</h1>
+        <form action="/clientdetails/edit/<%= client.clientid %>" method="POST">
+            <section>
+                <h2>Client Information</h2>
+                <div>
+                    <label for="clientfirst">First Name:</label>
+                    <input type="text" id="clientfirst" name="clientfirst" value="<%= client.clientfirst %>" required>
+                </div>
+                <div>
+                    <label for="clientlast">Last Name:</label>
+                    <input type="text" id="clientlast" name="clientlast" value="<%= client.clientlast %>" required>
+                </div>
+                <div>
+                    <label for="clientstreetaddress">Street Address:</label>
+                    <input type="text" id="clientstreetaddress" name="clientstreetaddress" value="<%= client.clientstreetaddress %>" required>
+                </div>
+                <div>
+                    <label for="clientcity">City:</label>
+                    <input type="text" id="clientcity" name="clientcity" value="<%= client.clientcity %>" required>
+                </div>
+                <div>
+                    <label for="clientstate">State:</label>
+                    <input type="text" id="clientstate" name="clientstate" value="<%= client.clientstate %>" required>
+                </div>
+                <div>
+                    <label for="clientzipcode">Zip Code:</label>
+                    <input type="text" id="clientzipcode" name="clientzipcode" value="<%= client.clientzipcode %>" required>
+                </div>
+                <div>
+                    <label for="clientphone">Phone:</label>
+                    <input type="text" id="clientphone" name="clientphone" value="<%= client.clientphone %>" required>
+                </div>
+                <div>
+                    <label for="clientemail">Email:</label>
+                    <input type="email" id="clientemail" name="clientemail" value="<%= client.clientemail %>" required>
+                </div>
+            </section>
+            <button type="submit">Save Changes</button>
+            <button type="button" onclick="window.location.href='/clientdetails/<%= client.clientid %>';">Cancel</button>
+        </form>
+    </main>
+</body>
+</html>
