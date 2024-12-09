@@ -70,7 +70,7 @@ app.post('/login', async (req, res) => {
 
     try {
         // Query the user table to find the record
-        const credentials = await knex('usercredentials')
+        const credentials = await knex('credentials')
             .select('*')
             .where({ username, password }) // replace with hashed password comparison in production
             .first();
@@ -113,7 +113,74 @@ app.get('/adminlanding', isAuthenticated, (req, res) => {
 });
 
 // Go to client page
+app.get('/clientinfo', isAuthenticated, async (req, res) => {
+    const client = await knex('client')
+        .join('order', 'client.clientid', '=', 'order.clientid')
+        .join('recurringschedule', 'order.recurringid', '=', 'recurringschedule.recurringid')
+        .join('services', 'order.serviceid', '=', 'services.serviceid')
+        .join('type', 'services.typeid', '=', 'type.typeid')
+        .join('building', 'services.buildingid', '=', 'building.buildingid')
+        .select(
+            'clientfirst',
+            'clientlast',
+            'transactiondate',
+            'frequency',
+            'buildingtype',
+            'typename',
+            'price',
+            'status'
+        )
+        .then(clients => {
+            if (!clients || clients.length === 0) {
+                return res.status(404).send('Client not found');
+            }
+
+            const client = clients[0];
+
+            // Convert strings to proper case
+            Object.keys(client).forEach(key => {
+                if (typeof client[key] === 'string') {
+                    client[key] = toProperCase(client[key]);
+                }
+            });
+
+            res.render('clientinfo', {client: {...client}});
+        })
+        .catch(error => {
+            console.error('Error querying database:', error);
+            res.status(500).send('Internal Server Error')
+        });
+});
+
+// go to client details for specific client
+app.get('/clientdetails/:clientid', isAuthenticated, async (req, res) => {
+    const {clientid} = req.params;
+    try{
+        // get all client details
+        const client = await knex('client')
+        .join('order', 'client.clientid', '=', 'order.clientid')
+        .join('recurringschedule', 'order.recurringid', '=', 'recurringschedule.recurringid')
+        .join('services', 'order.serviceid', '=', 'services.serviceid')
+        .join('type', 'services.typeid', '=', 'type.typeid')
+        .join('building', 'services.buildingid', '=', 'building.buildingid')
+        .where('clientid', clientid)
+        .select(
+            'clientfirst',
+            'clientlast',
+            'transactiondate',
+            'frequency',
+            'buildingtype',
+            'typename',
+            'price',
+            'status'
+        )
+        .first();
+    }
+})
 
 // Go to calender
+
+// go to user info
+
 
 app.listen(port, () => console.log("Express App has started listening."));
