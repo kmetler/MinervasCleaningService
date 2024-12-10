@@ -146,3 +146,48 @@ footer p {
         font-size: 18px;
     }
 }
+
+
+
+.price-display {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.price-display p {
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+
+
+
+
+
+.building-option {
+    cursor: pointer;
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #38B6FF;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.building-option:hover {
+    background-color: #0096FF;
+}
+
+.price-display {
+    margin-top: 5px;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #333;
+}
+

@@ -56,10 +56,35 @@ function toProperCase(str) {
 
 // ** Public Routes **
 // go to landing
-app.get("/", async (req,res) => {
-    const types = await knex.select('typename').from('type');
-    res.render("index", {types});
+
+
+
+
+app.get("/", async (req, res) => {
+    try {
+        const servicesWithDetails = await knex('services')
+            .join('type', 'services.typeid', '=', 'type.typeid')
+            .join('building', 'services.buildingid', '=', 'building.buildingid')
+            .select(
+                'type.typeid',
+                'type.typename',
+                'type.typedescription',
+                'services.serviceid',
+                'services.buildingid',
+                'services.price',
+                'building.buildingtype'
+            );
+
+        res.render("index", { services: servicesWithDetails });
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        res.status(500).send("An error occurred while fetching data.");
+    }
 });
+
+
+
+
 
 // go to login
 app.get("/login", (req, res) => res.render("login"));
