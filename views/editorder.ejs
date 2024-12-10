@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Order</title>
+</head>
+<body>
+    <h1>Edit Order</h1>
+
+    <!-- Form to edit order details -->
+    <form action="/updateorder/<%= order.orderid %>" method="POST">
+        <label for="transactiondate">Transaction Date:</label>
+        <input type="date" id="transactiondate" name="transactiondate" value="<%= order.transactiondate.toISOString().split('T')[0] %>" required>
+        <br />
+
+        <label for="paid">Paid:</label>
+        <select id="paid" name="paid">
+            <option value="true" <%= order.paid ? 'selected' : '' %>>Yes</option>
+            <option value="false" <%= !order.paid ? 'selected' : '' %>>No</option>
+        </select>
+        <br />
+
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <!-- Button to return to client details -->
+    <button onclick="window.location.href='/clientdetails/<%= order.clientid %>';">Back to Client Details</button>
+</body>
+</html>

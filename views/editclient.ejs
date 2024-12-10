@@ -43,6 +43,33 @@
                     <label for="clientemail">Email:</label>
                     <input type="email" id="clientemail" name="clientemail" value="<%= client.clientemail %>" required>
                 </div>
+                <div>
+                    <label for="status">Status:</label>
+                    <select name="status" id="status">
+                        <option value="P" <%= client.status === 'P' ? 'selected' : '' %>>Pending</option>
+                        <option value="A" <%= client.status === 'A' ? 'selected' : '' %>>Approved</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="typename">Service Type:</label>
+                    <select name="typename" id="typename">
+                        <% services.forEach(service => { %>
+                            <option value="<%= service.typename %>" <%= client.typename === service.typename ? 'selected' : '' %>>
+                                <%= service.typename %>
+                            </option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div>
+                    <label for="buildingtype">Building Type:</label>
+                    <select name="buildingtype" id="buildingtype">
+                        <% buildings.forEach(building => { %>
+                            <option value="<%= building.buildingtype %>" <%= client.buildingtype === building.buildingtype ? 'selected' : '' %>>
+                                <%= building.buildingtype %>
+                            </option>
+                        <% }); %>
+                    </select>
+                </div>
             </section>
             <button type="submit">Save Changes</button>
             <button type="button" onclick="window.location.href='/clientdetails/<%= client.clientid %>';">Cancel</button>

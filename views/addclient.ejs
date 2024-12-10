@@ -44,9 +44,56 @@
                     <input type="email" id="clientemail" name="clientemail" placeholder="Enter email address" required>
                 </div>
             </section>
+
+            <section>
+                <h2>Service Details</h2>
+                <div>
+                    <label for="buildingtype">Building Type:</label>
+                    <select id="buildingtype" name="buildingtype" required onchange="updatePrice()">
+                        <option value="" disabled selected>Select Building Type</option>
+                        <!-- Dynamically load building types -->
+                        <% buildingTypes.forEach(building => { %>
+                            <option value="<%= building.buildingid %>"><%= building.buildingtype %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div>
+                    <label for="servicetype">Service Type:</label>
+                    <select id="servicetype" name="servicetype" required onchange="updatePrice()">
+                        <option value="" disabled selected>Select Service Type</option>
+                        <!-- Dynamically load service types -->
+                        <% serviceTypes.forEach(service => { %>
+                            <option value="<%= service.serviceid %>" data-price="<%= service.price %>">
+                                <%= service.typename %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div>
+                    <label for="price">Price per Month:</label>
+                    <p id="priceDisplay" style="font-weight: bold;">$0</p>
+                </div>
+            </section>
+
             <button type="submit">Add Client</button>
             <button type="button" onclick="window.location.href='/clients';">Cancel</button>
         </form>
     </main>
+
+    <script>
+        // Update the price dynamically based on service type selection
+        function updatePrice() {
+            const serviceSelect = document.getElementById('servicetype');
+            const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+            const priceDisplay = document.getElementById('priceDisplay');
+    
+            if (selectedOption && selectedOption.dataset.price) {
+                priceDisplay.textContent = `$${selectedOption.dataset.price}`;
+            } else {
+                priceDisplay.textContent = '$0';
+            }
+        }
+    </script>
+
 </body>
 </html>
