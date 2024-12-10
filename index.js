@@ -336,8 +336,8 @@ app.post('/addclient', isAuthenticated, async (req, res) => {
         clientzipcode,
         clientphone,
         clientemail,
-        buildingtype,
-        servicetype
+        buildingid,
+        typeid
     } = req.body;
 
     try {
@@ -347,8 +347,8 @@ app.post('/addclient', isAuthenticated, async (req, res) => {
             const [service] = await trx('services')
                 .select('serviceid')
                 .where({
-                    typeid: servicetype,
-                    buildingid: buildingtype
+                    typeid: typeid,
+                    buildingid: buildingid
                 })
                 .limit(1);
 
@@ -357,11 +357,10 @@ app.post('/addclient', isAuthenticated, async (req, res) => {
                 serviceid = service.serviceid;
             } else {
                 // If no matching service exists, create a new one
-                // Note: You might want to set a default price or handle it differently
                 const [newService] = await trx('services')
                     .insert({
-                        typeid: servicetype,
-                        buildingid: buildingtype,
+                        typeid: typeid,
+                        buildingid: buildingid,
                         price: 0 // Set a default price or handle this as needed
                     })
                     .returning('serviceid');
@@ -378,11 +377,12 @@ app.post('/addclient', isAuthenticated, async (req, res) => {
                 clientzipcode,
                 clientphone,
                 clientemail,
+                status: 'A',
                 serviceid: serviceid
             });
         });
 
-        res.redirect('/clients'); // Redirect to the client list page after adding
+        res.redirect('/clientinfo'); // Redirect to the client list page after adding
     } catch (error) {
         console.error('Error adding client:', error);
         res.status(500).send('Internal Server Error');

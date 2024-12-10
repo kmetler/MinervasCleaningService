@@ -49,9 +49,8 @@
                 <h2>Service Details</h2>
                 <div>
                     <label for="buildingtype">Building Type:</label>
-                    <select id="buildingtype" name="buildingtype" required onchange="updatePrice()">
+                    <select id="buildingtype" name="buildingid" required>
                         <option value="" disabled selected>Select Building Type</option>
-                        <!-- Dynamically load building types -->
                         <% buildingTypes.forEach(building => { %>
                             <option value="<%= building.buildingid %>"><%= building.buildingtype %></option>
                         <% }) %>
@@ -59,11 +58,10 @@
                 </div>
                 <div>
                     <label for="servicetype">Service Type:</label>
-                    <select id="servicetype" name="servicetype" required onchange="updatePrice()">
+                    <select id="servicetype" name="typeid" required>
                         <option value="" disabled selected>Select Service Type</option>
-                        <!-- Dynamically load service types -->
                         <% serviceTypes.forEach(service => { %>
-                            <option value="<%= service.serviceid %>" data-price="<%= service.price %>">
+                            <option value="<%= service.typeid %>">
                                 <%= service.typename %>
                             </option>
                         <% }) %>
