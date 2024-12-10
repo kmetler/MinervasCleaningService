@@ -3,14 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Admin Landing Page</title>
+    <style>  
+        /* General Reset */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            height: 100%
+        }
+
+        /* Flexbox layout */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background-color: #00796b; /* Teal color */
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .navbar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .navbar ul li {
+            margin-left: 1rem;
+        }
+
+        .navbar ul li form button {
+            text-decoration: none;
+            background-color: rgb(13, 37, 37);
+            color: white;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: px;
+            transition: background-color 0.3s;
+        }
+
+        .navbar ul li form button:hover {
+            background-color: #4f635f; /* Darker teal */
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #00796b;
+        }
+
+        .card {
+            display: inline-block;
+            width: 45%;
+            margin: 1rem;
+            padding: 1.5rem;
+            background-color: #e0f2f1; /* Light teal background */
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card form button{
+            text-decoration: none;
+            color: #004d40;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .card form button:hover {
+            color: #00796b;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+            background-color: #004d40;
+            color: white;
+            font-size: 0.9rem;
+        }
+    </style>  
 </head>
 <body>
-    <form action="/clientinfo" method="GET">
-        <button type="submit">Client Information</button>
-    </form>
-    <form action="/userinfo" method="GET">
-        <button type="submit">User Information</button>
-    </form>
+    
+
+    <div class="navbar">
+        <h1>Admin Panel</h1>
+        <ul>
+            <li>
+                <form action="/clientinfo" method="GET">
+                    <button type="submit">Client Information</button>
+                </form>
+            </li>
+            
+            <li>
+                <form action="/userinfo" method="GET">
+                    <button type="submit">User Information</button>
+                </form>
+            </li>
+            
+            <!--<li><a href="#client-info">Client Information</a></li>
+            <li><a href="#user-info">User Information</a></li>-->
+        </ul>
+    </div>
+
+   
+    <div class="container">
+        <h2>Welcome to the Admin Panel</h2>
+        
+        <div class="card">
+            <form action="/client-info" method="GET">
+                <button type="submit">Go to Client Information</button>
+            </form>
+        </div>
+        
+        <div class="card">
+            <form action="/user-info" method="GET">
+                <button type="submit">Go to User Information</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2024 Admin Panel. All rights reserved.
+    </div>
 </body>
 </html>
