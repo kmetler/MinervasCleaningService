@@ -4,53 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client Information</title>
+    <link rel="stylesheet" href="/css/clientinfo.css">
 </head>
 <body>
     <h1>Client Information</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Zip Code</Code></th>
-                <th>Status</th>
-                <th>Building Type</th>
-                <th>Service Type</th>
-                <th>Price</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% if (clients && clients.length > 0) { %>
-                <% clients.forEach(client => { %>
-                    <tr>
-                        <td><%= client.clientfirst %></td>
-                        <td><%= client.clientlast %></td>
-                        <td><%= client.clientzipcode %></td>
-                        <td><%= client.status === 'P' ? 'Pending' : 'Approved' %></td>
-                        <td><%= client.buildingtype %></td>
-                        <td><%= client.typename %></td>
-                        <td><%= client.price %></td>
-                        <td>
-                            <form action="/clientdetails/<%= client.clientid %>" method="get">
-                                <button type="submit">See More</button>
-                            </form>
-                        </td>
-                    </tr>
-                <% }) %>
-            <% } else { %>
+    <div class="container">    
+        <table>
+            <thead>
                 <tr>
-                    <td colspan="13">No client information available.</td>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Zip Code</Code></th>
+                    <th>Status</th>
+                    <th>Building Type</th>
+                    <th>Service Type</th>
+                    <th>Price</th>
+                    <th>Actions</th>
                 </tr>
-            <% } %>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <% if (clients && clients.length > 0) { %>
+                    <% clients.forEach(client => { %>
+                        <tr>
+                            <td><%= client.clientfirst %></td>
+                            <td><%= client.clientlast %></td>
+                            <td><%= client.clientzipcode %></td>
+                            <td><%= client.status === 'P' ? 'Pending' : 'Approved' %></td>
+                            <td><%= client.buildingtype %></td>
+                            <td><%= client.typename %></td>
+                            <td><%= client.price %></td>
+                            <td>
+                                <form action="/clientdetails/<%= client.clientid %>" method="get">
+                                    <button type="submit">See More</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="13">No client information available.</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
 
-    <br>
 
-    <form action="/adminlanding" method="get">
-        <button type="submit">Admin Landing Page</button>
-    </form>
+    <div class="admin-button-container">
+        <form action="/adminlanding" method="get">
+            <button type="submit">Admin Landing Page</button>
+        </form>
+    </div>
+
 </body>
 </html>
