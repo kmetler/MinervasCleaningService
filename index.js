@@ -238,7 +238,6 @@ app.get('/clientinfo', isAuthenticated, async (req, res) => {
 
         const pendingClients = await clientsQuery.clone()
             .where('status', 'P')
-            .orderBy('nextTransactionDate', 'asc')
             .orderBy('clientlast', 'asc')
             .orderBy('clientfirst', 'asc');
 
