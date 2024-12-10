@@ -138,6 +138,15 @@ app.get('/signupclient', async (req, res) => {
         const buildingTypes = await knex('building').select('buildingid', 'buildingtype');
         const serviceTypes = await knex('type').select('typeid', 'typename', 'typedescription');
 
+        // Apply toProperCase to the building and service types
+        buildingTypes.forEach(building => {
+            building.buildingtype = toProperCase(building.buildingtype);
+        });
+
+        serviceTypes.forEach(service => {
+            service.typename = toProperCase(service.typename);
+        });
+
         // Render the form with the fetched data
         res.render('signupclient', { buildingTypes, serviceTypes });
     } catch (error) {
@@ -220,44 +229,68 @@ app.get('/adminlanding', isAuthenticated, (req, res) => {
 // Go to client page
 app.get('/clientinfo', isAuthenticated, async (req, res) => {
     try {
-        const clients = await knex('client')
-            .leftJoin('orders', 'client.clientid', '=', 'orders.clientid')
+        const currentDate = new Date();
+
+        const clientsQuery = knex('client')
             .join('services', 'client.serviceid', '=', 'services.serviceid')
             .join('type', 'services.typeid', '=', 'type.typeid')
             .join('building', 'services.buildingid', '=', 'building.buildingid')
+            .leftJoin('orders', function() {
+                this.on('client.clientid', '=', 'orders.clientid')
+                    .andOn('orders.transactiondate', '>', knex.raw('CURRENT_DATE'))
+            })
             .select(
                 'client.clientid',
                 'clientfirst',
                 'clientlast',
-                'clientstreetaddress',
-                'clientcity',
-                'clientstate',
                 'clientzipcode',
-                'clientphone',
-                'clientemail',
                 'status',
                 'buildingtype',
                 'typename',
-                'price',
+                'price'
             )
-            .orderBy('status', 'desc') // Order by status descending
-            .orderBy('clientlast', 'asc') // Then by last name ascending
-            .orderBy('clientfirst', 'asc'); // Finally by first name ascending
+            .min('orders.transactiondate as nextTransactionDate')
+            .groupBy(
+                'client.clientid',
+                'clientfirst',
+                'clientlast',
+                'clientzipcode',
+                'status',
+                'buildingtype',
+                'typename',
+                'price'
+            );
 
-        if (!clients || clients.length === 0) {
-            return res.status(404).send('No clients found');
-        }
+        const pendingClients = await clientsQuery.clone()
+            .where('status', 'P')
+            .orderBy('clientlast', 'asc')
+            .orderBy('clientfirst', 'asc');
+
+        const approvedClients = await clientsQuery.clone()
+            .where('status', 'A')
+            .orderBy('nextTransactionDate', 'asc')
+            .orderBy('clientlast', 'asc')
+            .orderBy('clientfirst', 'asc');
 
         // Convert all client strings to proper case
-        clients.forEach(client => {
-            Object.keys(client).forEach(key => {
-                if (typeof client[key] === 'string' && key !== 'clientemail') {
-                    client[key] = toProperCase(client[key]);
-                }
+        const convertToProperCase = (clients) => {
+            return clients.map(client => {
+                Object.keys(client).forEach(key => {
+                    if (typeof client[key] === 'string' && key !== 'clientemail') {
+                        client[key] = toProperCase(client[key]);
+                    }
+                });
+                return client;
             });
-        });
+        };
 
-        res.render('clientinfo', { clients }); // Pass the entire array
+        const formattedPendingClients = convertToProperCase(pendingClients);
+        const formattedApprovedClients = convertToProperCase(approvedClients);
+
+        res.render('clientinfo', { 
+            pendingClients: formattedPendingClients, 
+            approvedClients: formattedApprovedClients 
+        });
     } catch (error) {
         console.error('Error querying database:', error);
         res.status(500).send('Internal Server Error');
@@ -318,11 +351,20 @@ app.get('/clientdetails/:clientid', isAuthenticated, async (req, res) => {
 });
 
 // Show the form to add a new client
-app.get('/clients/add', isAuthenticated, async (req, res) => {
+app.get('/addclient', isAuthenticated, async (req, res) => {
     try {
         // Fetch building types and service types from the database
         const buildingTypes = await knex('building').select('buildingid', 'buildingtype');
         const serviceTypes = await knex('type').select('typeid', 'typename', 'typedescription');
+
+        // Apply toProperCase to the building and service types
+        buildingTypes.forEach(building => {
+            building.buildingtype = toProperCase(building.buildingtype);
+        });
+
+        serviceTypes.forEach(service => {
+            service.typename = toProperCase(service.typename);
+        });
 
         // Render the form with the fetched data
         res.render('addclient', { buildingTypes, serviceTypes });
@@ -333,7 +375,7 @@ app.get('/clients/add', isAuthenticated, async (req, res) => {
 });
 
 // Add a new client
-app.post('/clients/add', isAuthenticated, async (req, res) => {
+app.post('/addclient', isAuthenticated, async (req, res) => {
     const {
         clientfirst,
         clientlast,
@@ -343,8 +385,8 @@ app.post('/clients/add', isAuthenticated, async (req, res) => {
         clientzipcode,
         clientphone,
         clientemail,
-        buildingtype,
-        servicetype
+        buildingid,
+        typeid
     } = req.body;
 
     try {
@@ -354,8 +396,8 @@ app.post('/clients/add', isAuthenticated, async (req, res) => {
             const [service] = await trx('services')
                 .select('serviceid')
                 .where({
-                    typeid: servicetype,
-                    buildingid: buildingtype
+                    typeid: typeid,
+                    buildingid: buildingid
                 })
                 .limit(1);
 
@@ -364,11 +406,10 @@ app.post('/clients/add', isAuthenticated, async (req, res) => {
                 serviceid = service.serviceid;
             } else {
                 // If no matching service exists, create a new one
-                // Note: You might want to set a default price or handle it differently
                 const [newService] = await trx('services')
                     .insert({
-                        typeid: servicetype,
-                        buildingid: buildingtype,
+                        typeid: typeid,
+                        buildingid: buildingid,
                         price: 0 // Set a default price or handle this as needed
                     })
                     .returning('serviceid');
@@ -385,11 +426,12 @@ app.post('/clients/add', isAuthenticated, async (req, res) => {
                 clientzipcode,
                 clientphone,
                 clientemail,
+                status: 'A',
                 serviceid: serviceid
             });
         });
 
-        res.redirect('/clients'); // Redirect to the client list page after adding
+        res.redirect('/clientinfo'); // Redirect to the client list page after adding
     } catch (error) {
         console.error('Error adding client:', error);
         res.status(500).send('Internal Server Error');
@@ -416,20 +458,39 @@ app.get('/editclient/:clientid', isAuthenticated, async (req, res) => {
                 'clientphone',
                 'clientemail',
                 'status',
+                'building.buildingid',
                 'buildingtype',
+                'type.typeid',
                 'typename'
             )
             .where('client.clientid', clientid)
             .first();
 
-        const services = await knex('type').select('typename');
-        const buildings = await knex('building').select('buildingtype');
-
         if (!client) {
             return res.status(404).send('Client not found');
         }
 
-        res.render('editclient', { client, services, buildings });
+        // Apply toProperCase to the client information (except for email)
+        client.clientfirst = toProperCase(client.clientfirst);
+        client.clientlast = toProperCase(client.clientlast);
+        client.clientstreetaddress = toProperCase(client.clientstreetaddress);
+        client.clientcity = toProperCase(client.clientcity);
+        client.clientstate = toProperCase(client.clientstate);
+        // Don't change the email (skip clientemail)
+
+        const serviceTypes = await knex('type').select('typeid', 'typename');
+        const buildingTypes = await knex('building').select('buildingid', 'buildingtype');
+
+        // Apply toProperCase to the building and service types
+        buildingTypes.forEach(building => {
+            building.buildingtype = toProperCase(building.buildingtype);
+        });
+
+        serviceTypes.forEach(service => {
+            service.typename = toProperCase(service.typename);
+        });
+
+        res.render('editclient', { client, serviceTypes, buildingTypes });
     } catch (error) {
         console.error('Error fetching client data:', error);
         res.status(500).send('Internal Server Error');
@@ -439,46 +500,59 @@ app.get('/editclient/:clientid', isAuthenticated, async (req, res) => {
 // Update a client's information
 app.post('/updateclient/:clientid', isAuthenticated, async (req, res) => {
     const { clientid } = req.params;
-    const { clientfirst, clientlast, status, typename, buildingtype } = req.body;
+    const { 
+        clientfirst, 
+        clientlast, 
+        clientstreetaddress,
+        clientcity,
+        clientstate,
+        clientzipcode,
+        clientphone,
+        clientemail,
+        status, 
+        typeid, 
+        buildingid 
+    } = req.body;
 
     try {
-        // Find the matching service ID based on typename and buildingtype
-        const service = await knex('services')
-            .join('type', 'services.typeid', '=', 'type.typeid')
-            .join('building', 'services.buildingid', '=', 'building.buildingid')
-            .where({ typename, buildingtype })
-            .select('serviceid')
-            .first();
+        await knex.transaction(async (trx) => {
+            // Find or create the service
+            let [service] = await trx('services')
+                .select('serviceid')
+                .where({ typeid, buildingid })
+                .limit(1);
 
-        if (!service) {
-            return res.status(400).send('Invalid service or building type');
-        }
+            if (!service) {
+                // If no matching service exists, create a new one
+                [service] = await trx('services')
+                    .insert({
+                        typeid,
+                        buildingid,
+                        price: 0 // Set a default price or handle this as needed
+                    })
+                    .returning('serviceid');
+            }
 
-        // Update client information
-        await knex('client')
-            .where('clientid', clientid)
-            .update({
-                clientfirst: clientfirst.toUpperCase(),
-                clientlast: clientlast.toUpperCase(),
-                status,
-                serviceid: service.serviceid,
-            });
+            // Update client information
+            await trx('client')
+                .where('clientid', clientid)
+                .update({
+                    clientfirst: clientfirst.toUpperCase(),
+                    clientlast: clientlast.toUpperCase(),
+                    clientstreetaddress: clientstreetaddress.toUpperCase(),
+                    clientcity: clientcity.toUpperCase(),
+                    clientstate: clientstate.toUpperCase(),
+                    clientzipcode,
+                    clientphone,
+                    clientemail,
+                    status,
+                    serviceid: service.serviceid,
+                });
+        });
 
         res.redirect(`/clientdetails/${clientid}`);
     } catch (error) {
         console.error('Error updating client:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-// go to add an order to a client
-app.get('/addorder/:clientid', isAuthenticated, async (req, res) => {
-    const { clientid } = req.params;
-
-    try {
-        res.render('addorder', { clientid });
-    } catch (error) {
-        console.error('Error displaying add order page:', error);
         res.status(500).send('Internal Server Error');
     }
 });
@@ -493,20 +567,76 @@ app.get('/deleteclient/:clientid', isAuthenticated, async (req, res) => {
             await trx('client').where('clientid', clientid).del();
         });
 
-        res.redirect('/adminlanding');
+        res.redirect('/clientinfo');
     } catch (error) {
         console.error('Error deleting client and orders:', error);
         res.status(500).send('Internal Server Error');
     }
 });
 
-// delete an individual order
-app.get('/deleteorder/:orderid', isAuthenticated, async (req, res) => {
-    const { orderid } = req.params;
+// go to add an order to a client
+app.get('/addorder/:clientid', async (req, res) => {
+    const { clientid } = req.params;
 
     try {
-        await knex('orders').where('orderid', orderid).del();
-        res.redirect('back');
+        // Fetch client details by ID
+        const client = await knex('client')
+            .select('clientid', 'clientfirst', 'clientlast')
+            .where('clientid', clientid)
+            .first();
+
+        if (!client) {
+            return res.status(404).send('Client not found');
+        }
+
+        // Render the addorder page with the client object
+        res.render('addorder', { client });
+    } catch (error) {
+        console.error('Error fetching client data for addorder:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// complete adding an order
+app.post('/addorder', async (req, res) => {
+    const { clientid, transactiondate, paid } = req.body;
+
+    try {
+        // Insert the new order into the orders table
+        await knex('orders').insert({
+            clientid,
+            transactiondate,
+            paid: paid === 'true' // Convert to boolean
+        });
+
+        // Redirect to the client's details page after adding the order
+        res.redirect(`/clientdetails/${clientid}`);
+    } catch (error) {
+        console.error('Error adding order:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// delete an individual order
+app.get('/deleteorder/:transactionid', isAuthenticated, async (req, res) => {
+    const { transactionid } = req.params;
+
+    try {
+        // First, fetch the clientid associated with this order
+        const order = await knex('orders')
+            .select('clientid')
+            .where('transactionid', transactionid)
+            .first();
+
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
+        // Delete the order
+        await knex('orders').where('transactionid', transactionid).del();
+
+        // Redirect to the client details page
+        res.redirect(`/clientdetails/${order.clientid}`);
     } catch (error) {
         console.error('Error deleting order:', error);
         res.status(500).send('Internal Server Error');
@@ -514,14 +644,14 @@ app.get('/deleteorder/:orderid', isAuthenticated, async (req, res) => {
 });
 
 // go to edit order page
-app.get('/editorder/:orderid', isAuthenticated, async (req, res) => {
-    const { orderid } = req.params;
+app.get('/editorder/:transactionid', isAuthenticated, async (req, res) => {
+    const { transactionid } = req.params; // Fix: Use req.params directly
 
     try {
         const order = await knex('orders')
             .join('client', 'orders.clientid', '=', 'client.clientid')
             .select('orders.*', 'client.clientid')
-            .where('orderid', orderid)
+            .where('orders.transactionid', transactionid) // Fix: Specify the table for transactionid
             .first();
 
         if (!order) {
@@ -536,19 +666,30 @@ app.get('/editorder/:orderid', isAuthenticated, async (req, res) => {
 });
 
 // finish updating the order
-app.post('/updateorder/:orderid', isAuthenticated, async (req, res) => {
-    const { orderid } = req.params;
+app.post('/updateorder/:transactionid', isAuthenticated, async (req, res) => {
+    const { transactionid } = req.params;
     const { transactiondate, paid } = req.body;
 
     try {
+        // Update the order
         await knex('orders')
-            .where('orderid', orderid)
+            .where('transactionid', transactionid)
             .update({
                 transactiondate: new Date(transactiondate),
                 paid: paid === 'true',
             });
 
-        res.redirect(`/clientdetails/${req.body.clientid}`);
+        // Fetch the clientid from the order
+        const order = await knex('orders')
+            .select('clientid')
+            .where('transactionid', transactionid)
+            .first();
+
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
+        res.redirect(`/clientdetails/${order.clientid}`);
     } catch (error) {
         console.error('Error updating order:', error);
         res.status(500).send('Internal Server Error');

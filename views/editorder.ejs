@@ -9,7 +9,8 @@
     <h1>Edit Order</h1>
 
     <!-- Form to edit order details -->
-    <form action="/updateorder/<%= order.orderid %>" method="POST">
+    <form action="/updateorder/<%= order.transactionid %>" method="POST">
+        <input type="hidden" name="clientid" value="<%= order.clientid %>">
         <label for="transactiondate">Transaction Date:</label>
         <input type="date" id="transactiondate" name="transactiondate" value="<%= order.transactiondate.toISOString().split('T')[0] %>" required>
         <br />

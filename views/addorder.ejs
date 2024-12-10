@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Order</title>
+</head>
+<body>
+    <h1>Add Order</h1>
+
+    <!-- Form to add order details -->
+    <form action="/addorder" method="POST">
+        <!-- Hidden input to include client ID -->
+        <input type="hidden" name="clientid" value="<%= client.clientid %>">
+
+        <label for="transactiondate">Transaction Date:</label>
+        <input type="date" id="transactiondate" name="transactiondate" required>
+        <br />
+
+        <label for="paid">Paid:</label>
+        <select id="paid" name="paid">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
+        <br />
+
+        <button type="submit">Add Order</button>
+    </form>
+
+    <!-- Button to return to client details -->
+    <button onclick="window.location.href='/clientdetails/<%= client.clientid %>';">Cancel</button>
+</body>
+</html>

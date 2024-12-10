@@ -1,0 +1,99 @@
+/* General Styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9fafb; /* Light neutral background */
+    color: #333; /* Neutral dark text */
+}
+
+/* Header */
+h1 {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #2c3e50; /* Dark blue-gray */
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* Container for Table */
+.container {
+    max-width: 90%;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #ffffff; /* Clean white background */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+    text-align: left;
+    font-size: 1rem;
+}
+
+thead {
+    background-color: #5BB8C1; /* Professional blue-gray */
+    color: white;
+}
+
+thead th {
+    padding: 1rem;
+    text-align: left;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f3f4f6; /* Alternating row background */
+}
+
+tbody tr:hover {
+    background-color: #e9ecef; /* Highlight on hover */
+}
+
+td, th {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+}
+
+/* Actions Button */
+form button {
+    background-color: #0E3C5C; /* Dark blue */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #2c3e50; /* Slightly darker on hover */
+}
+
+/* Admin Landing Page Button */
+.admin-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.admin-button-container form button {
+    background-color: #3C8D32; /* Green for secondary actions */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.admin-button-container form button:hover {
+    background-color: #5CA838; /* Slightly darker green */
+}
