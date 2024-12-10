@@ -8,7 +8,7 @@
 <body>
     <main>
         <h1 style="text-align: center; font-size: 40px;">Edit Client Details</h1>
-        <form action="/clientdetails/edit/<%= client.clientid %>" method="POST">
+        <form action="/updateclient/<%= client.clientid %>" method="POST">
             <section>
                 <h2>Client Information</h2>
                 <div>
@@ -51,20 +51,20 @@
                     </select>
                 </div>
                 <div>
-                    <label for="typename">Service Type:</label>
-                    <select name="typename" id="typename">
-                        <% services.forEach(service => { %>
-                            <option value="<%= service.typename %>" <%= client.typename === service.typename ? 'selected' : '' %>>
-                                <%= service.typename %>
+                    <label for="typeid">Service Type:</label>
+                    <select name="typeid" id="typeid">
+                        <% serviceTypes.forEach(type => { %>
+                            <option value="<%= type.typeid %>" <%= client.typeid === type.typeid ? 'selected' : '' %>>
+                                <%= type.typename %>
                             </option>
                         <% }); %>
                     </select>
                 </div>
                 <div>
-                    <label for="buildingtype">Building Type:</label>
-                    <select name="buildingtype" id="buildingtype">
-                        <% buildings.forEach(building => { %>
-                            <option value="<%= building.buildingtype %>" <%= client.buildingtype === building.buildingtype ? 'selected' : '' %>>
+                    <label for="buildingid">Building Type:</label>
+                    <select name="buildingid" id="buildingid">
+                        <% buildingTypes.forEach(building => { %>
+                            <option value="<%= building.buildingid %>" <%= client.buildingid === building.buildingid ? 'selected' : '' %>>
                                 <%= building.buildingtype %>
                             </option>
                         <% }); %>
