@@ -47,7 +47,6 @@
 
             <section>
                 <h2>Service Information</h2>
-                <!-- Building Type Dropdown -->
                 <div>
                     <label for="buildingtype">Building Type:</label>
                     <select id="buildingtype" name="buildingtype" required>
@@ -58,61 +57,20 @@
                     </select>
                 </div>
     
-                <!-- Service Type Dropdown -->
                 <div>
                     <label for="servicetype">Service Type:</label>
                     <select id="servicetype" name="servicetype" required>
                         <option value="" disabled selected>Select a service type</option>
                         <% serviceTypes.forEach(service => { %>
-                            <option value="<%= service.serviceid %>"><%= service.typename %></option>
+                            <option value="<%= service.typeid %>"><%= service.typename %></option>
                         <% }); %>
                     </select>
-                </div>
-    
-                <!-- Display Price -->
-                <div>
-                    <p id="price-display" style="font-weight: bold; font-size: 18px;">Price: $<span id="price">0.00</span> per month</p>
-                </div>
+                </div>         
             </section>
 
             <button type="submit">Add Client</button>
             <button type="button" onclick="window.location.href='/';">Cancel</button>
         </form>
-
-        <!-- JavaScript for dynamic price updates -->
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const buildingType = document.getElementById('buildingtype');
-                const serviceType = document.getElementById('servicetype');
-                const priceDisplay = document.getElementById('price');
-
-                async function updatePrice() {
-                    const buildingId = buildingType.value;
-                    const serviceId = serviceType.value;
-
-                    if (buildingId && serviceId) {
-                        try {
-                            const response = await fetch(`/getprice?buildingid=${buildingId}&serviceid=${serviceId}`);
-                            const data = await response.json();
-                            if (data.success) {
-                                priceDisplay.textContent = data.price.toFixed(2);
-                            } else {
-                                priceDisplay.textContent = "0.00";
-                            }
-                        } catch (error) {
-                            console.error('Error fetching price:', error);
-                            priceDisplay.textContent = "0.00";
-                        }
-                    } else {
-                        priceDisplay.textContent = "0.00";
-                    }
-                }
-
-                buildingType.addEventListener('change', updatePrice);
-                serviceType.addEventListener('change', updatePrice);
-            });
-        </script>
-
     </main>
 </body>
 </html>

@@ -69,31 +69,11 @@
                         <% }) %>
                     </select>
                 </div>
-                <div>
-                    <label for="price">Price per Month:</label>
-                    <p id="priceDisplay" style="font-weight: bold;">$0</p>
-                </div>
             </section>
 
             <button type="submit">Add Client</button>
             <button type="button" onclick="window.location.href='/clients';">Cancel</button>
         </form>
     </main>
-
-    <script>
-        // Update the price dynamically based on service type selection
-        function updatePrice() {
-            const serviceSelect = document.getElementById('servicetype');
-            const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
-            const priceDisplay = document.getElementById('priceDisplay');
-    
-            if (selectedOption && selectedOption.dataset.price) {
-                priceDisplay.textContent = `$${selectedOption.dataset.price}`;
-            } else {
-                priceDisplay.textContent = '$0';
-            }
-        }
-    </script>
-
 </body>
 </html>
