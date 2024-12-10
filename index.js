@@ -302,7 +302,7 @@ app.get('/clientdetails/:clientid', isAuthenticated, async (req, res) => {
 });
 
 // Show the form to add a new client
-app.get('/clients/add', isAuthenticated, async (req, res) => {
+app.get('/addclient', isAuthenticated, async (req, res) => {
     try {
         // Fetch building types and service types from the database
         const buildingTypes = await knex('building').select('buildingid', 'buildingtype');
@@ -326,7 +326,7 @@ app.get('/clients/add', isAuthenticated, async (req, res) => {
 });
 
 // Add a new client
-app.post('/clients/add', isAuthenticated, async (req, res) => {
+app.post('/addclient', isAuthenticated, async (req, res) => {
     const {
         clientfirst,
         clientlast,
