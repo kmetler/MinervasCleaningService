@@ -23,8 +23,8 @@
             <tbody>
                 <% users.forEach(user => { %>
                     <tr>
-                        <td><%= user.userfirstname %></td>
-                        <td><%= user.userlastname %></td>
+                        <td><%= user.userfirst %></td>
+                        <td><%= user.userlast %></td>
                         <td><%= user.userphone %></td>
                         <td><%= user.useremail %></td>
                         <td><%= user.username %></td>
@@ -48,7 +48,7 @@
             </tbody>
         </table>
 
-        <form action="/addUser" method="GET">
+        <form action="/adduser" method="GET">
             <button type="submit">Add User</button>
         </form>
         <br>

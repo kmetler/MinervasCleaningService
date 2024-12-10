@@ -10,13 +10,13 @@
         <h1>Edit User</h1>
         <form action="/edituser/<%= user.userid %>" method="POST">
             <div class="form-group">
-                <label for="userfirstname">First Name</label>
-                <input type="text" id="userfirstname" name="userfirstname" value="<%= user.userfirstname %>" required>
+                <label for="userfirst">First Name</label>
+                <input type="text" id="userfirst" name="userfirst" value="<%= user.userfirst %>" required>
             </div>
 
             <div class="form-group">
-                <label for="userlastname">Last Name</label>
-                <input type="text" id="userlastname" name="userlastname" value="<%= user.userlastname %>" required>
+                <label for="userlast">Last Name</label>
+                <input type="text" id="userlast" name="userlast" value="<%= user.userlast %>" required>
             </div>
 
             <div class="form-group">
@@ -46,7 +46,7 @@
 
         <!-- Cancel Edit (optional) -->
         <div class="go-back-btn">
-            <form action="/usercredentials" method="GET">
+            <form action="/userinfo" method="GET">
                 <button type="submit" class="cancel-button">Cancel</button>
             </form>
         </div>

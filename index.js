@@ -132,53 +132,57 @@ app.post('/signupclient', async (req, res) => {
         clientzipcode,
         clientphone,
         clientemail,
-        buildingtype,
-        servicetype
+        buildingtype, // Changed from buildingid
+        servicetype  // This corresponds to typeid
     } = req.body;
 
     try {
-        await knex('client').insert({
-            clientfirst: clientfirst.toUpperCase(),
-            clientlast: clientlast.toUpperCase(),
-            clientstreetaddress: clientstreetaddress.toUpperCase(),
-            clientcity: clientcity.toUpperCase(),
-            clientstate: clientstate.toUpperCase(),
-            clientzipcode,
-            clientphone,
-            clientemail,
-            status: 'P', // make the client pending automatically
-            buildingid: buildingtype,
-            serviceid: servicetype
+        // Start a transaction
+        await knex.transaction(async (trx) => {
+            // Find or create a service entry
+            const [service] = await trx('services')
+                .select('serviceid')
+                .where({
+                    typeid: servicetype,
+                    buildingid: buildingtype
+                })
+                .limit(1);
+
+            let serviceid;
+            if (service) {
+                serviceid = service.serviceid;
+            } else {
+                // If no matching service exists, create a new one
+                // Note: You might want to set a default price or handle it differently
+                const [newService] = await trx('services')
+                    .insert({
+                        typeid: servicetype,
+                        buildingid: buildingtype,
+                        price: 0 // Set a default price or handle this as needed
+                    })
+                    .returning('serviceid');
+                serviceid = newService.serviceid;
+            }
+
+            // Insert the new client
+            await trx('client').insert({
+                clientfirst: clientfirst.toUpperCase(),
+                clientlast: clientlast.toUpperCase(),
+                clientstreetaddress: clientstreetaddress.toUpperCase(),
+                clientcity: clientcity.toUpperCase(),
+                clientstate: clientstate.toUpperCase(),
+                clientzipcode,
+                clientphone,
+                clientemail,
+                status: 'P', // make the client pending automatically
+                serviceid: serviceid
+            });
         });
 
         res.redirect('/'); // Redirect to the client list page after adding
     } catch (error) {
         console.error('Error submitting client:', error);
         res.status(500).send('Internal Server Error');
-    }
-});
-
-// route to dynamically display price on sign up
-app.get('/getprice', async (req, res) => {
-    const { buildingid, serviceid } = req.query;
-
-    try {
-        // Fetch price for the selected building and service type
-        const service = await knex('services')
-            .join('building', 'services.buildingid', '=', 'building.buildingid')
-            .select('price')
-            .where('services.serviceid', serviceid)
-            .andWhere('building.buildingid', buildingid)
-            .first();
-
-        if (service) {
-            return res.json({ success: true, price: service.price });
-        } else {
-            return res.json({ success: false, message: 'Price not found' });
-        }
-    } catch (error) {
-        console.error('Error fetching price:', error);
-        res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 });
 
@@ -301,7 +305,7 @@ app.get('/clients/add', isAuthenticated, async (req, res) => {
         console.error('Error fetching dropdown data:', error);
         res.status(500).send('Internal Server Error');
     }
-});    
+});
 
 // Add a new client
 app.post('/clients/add', isAuthenticated, async (req, res) => {
@@ -319,17 +323,45 @@ app.post('/clients/add', isAuthenticated, async (req, res) => {
     } = req.body;
 
     try {
-        await knex('client').insert({
-            clientfirst: clientfirst.toUpperCase(),
-            clientlast: clientlast.toUpperCase(),
-            clientstreetaddress: clientstreetaddress.toUpperCase(),
-            clientcity: clientcity.toUpperCase(),
-            clientstate: clientstate.toUpperCase(),
-            clientzipcode,
-            clientphone,
-            clientemail,
-            buildingid: buildingtype,
-            serviceid: servicetype
+        // Start a transaction
+        await knex.transaction(async (trx) => {
+            // Find or create a service entry
+            const [service] = await trx('services')
+                .select('serviceid')
+                .where({
+                    typeid: servicetype,
+                    buildingid: buildingtype
+                })
+                .limit(1);
+
+            let serviceid;
+            if (service) {
+                serviceid = service.serviceid;
+            } else {
+                // If no matching service exists, create a new one
+                // Note: You might want to set a default price or handle it differently
+                const [newService] = await trx('services')
+                    .insert({
+                        typeid: servicetype,
+                        buildingid: buildingtype,
+                        price: 0 // Set a default price or handle this as needed
+                    })
+                    .returning('serviceid');
+                serviceid = newService.serviceid;
+            }
+
+            // Insert the new client
+            await trx('client').insert({
+                clientfirst: clientfirst.toUpperCase(),
+                clientlast: clientlast.toUpperCase(),
+                clientstreetaddress: clientstreetaddress.toUpperCase(),
+                clientcity: clientcity.toUpperCase(),
+                clientstate: clientstate.toUpperCase(),
+                clientzipcode,
+                clientphone,
+                clientemail,
+                serviceid: serviceid
+            });
         });
 
         res.redirect('/clients'); // Redirect to the client list page after adding
@@ -501,29 +533,31 @@ app.post('/updateorder/:orderid', isAuthenticated, async (req, res) => {
 // go to user info
 app.get('/userinfo', isAuthenticated, async (req, res) => {
     try {
-        const users = await knex('usercredentials')
+        const users = await knex('credentials')
             .select(
                 'userid',
-                'userfirstname',
-                'userlastname',
+                'userfirst',
+                'userlast',
                 'userphone',
                 'useremail',
                 'username',
                 'password'
-            );
+            )
+            .orderBy('userlast', 'asc')
+            .orderBy('userfirst', 'asc');
 
         // Apply toProperCase to relevant string fields
         const formattedUsers = users.map(user => ({
             userid: user.userid, // Keep numeric fields as they are
-            userfirstname: toProperCase(user.userfirstname),
-            userlastname: toProperCase(user.userlastname),
+            userfirst: toProperCase(user.userfirst),
+            userlast: toProperCase(user.userlast),
             userphone: user.userphone, // Leave non-string fields untouched
             useremail: user.useremail,
             username: user.username,
             password: user.password // Normally passwords wouldn't be displayed
         }));
 
-        res.render('usercredentials', { users: formattedUsers });
+        res.render('userinfo', { users: formattedUsers });
     }
     catch (error) {
         console.error('Error retrieving user credentials:', error);
@@ -536,7 +570,7 @@ app.get('/edituser/:userid', isAuthenticated, async (req, res) => {
     const userid = req.params.userid;
 
     try {
-        const user = await knex('usercredentials')
+        const user = await knex('credentials')
             .where({ userid: userid})
             .first();
             
@@ -547,8 +581,8 @@ app.get('/edituser/:userid', isAuthenticated, async (req, res) => {
         // Apply toProperCase to relevant string fields
         const formattedUser = {
             userid: user.userid, // Keep numeric fields unchanged
-            userfirstname: toProperCase(user.userfirstname),
-            userlastname: toProperCase(user.userlastname),
+            userfirst: toProperCase(user.userfirst),
+            userlast: toProperCase(user.userlast),
             userphone: user.userphone, // Phone numbers are not transformed
             useremail: user.useremail,
             username: user.username, // Optionally format usernames if needed
@@ -565,21 +599,21 @@ app.get('/edituser/:userid', isAuthenticated, async (req, res) => {
 app.post('/edituser/:userid', isAuthenticated, async (req, res) => {
     const userid = req.params.userid;
 
-    const { userfirstname, userlastname, userphone, useremail, username, password } = req.body;
+    const { userfirst, userlast, userphone, useremail, username, password } = req.body;
 
     try {
-        await knex('usercredentials')
+        await knex('credentials')
             .where('userid', userid)
             .update({
-                userfirstname: userfirstname.toUpperCase(),
-                userlastname: userlastname.toUpperCase(),
+                userfirst: userfirst.toUpperCase(),
+                userlast: userlast.toUpperCase(),
                 userphone: userphone,
                 useremail: useremail,
                 username: username,
                 password: password,
             });
         
-        res.redirect('/usercredentials');
+        res.redirect('/userinfo');
     } catch (error) {
         console.error('Error updating user:', error);
         res.status(500).send('Internal Server Error');
@@ -591,11 +625,11 @@ app.post('/deleteuser/:userid', isAuthenticated, async (req, res) => {
     const userid = req.params.userid;
   
     try {
-        const user = await knex('usercredentials')
+        const user = await knex('credentials')
             .where('userid', userid)
             .del();
 
-            res.redirect('/usercredentials');
+            res.redirect('/userinfo');
     } catch (error) {
         console.error('Error deleting user:', error);
         res.status(500).send('Internal Server Error');
@@ -603,32 +637,32 @@ app.post('/deleteuser/:userid', isAuthenticated, async (req, res) => {
 });
 
 // go to add user page
-app.get('/addUser', isAuthenticated, (req, res) => {
-    res.render('addUser');
+app.get('/adduser', isAuthenticated, (req, res) => {
+    res.render('adduser');
 })
 
 // save added user
-app.post('/addUser', isAuthenticated, async (req, res) => {
-    const userfirstname = req.body.userfirstname || '';
-    const userlastname = req.body.userlastname || '';
+app.post('/adduser', isAuthenticated, async (req, res) => {
+    const userfirst = req.body.userfirst || '';
+    const userlast = req.body.userlast || '';
     const userphone = req.body.userphone || '';
     const useremail = req.body.useremail || '';
     const username = req.body.username || '';
     const password = req.body.password || '';
 
     try {
-        await knex('usercredentials')
+        await knex('credentials')
         .insert({
-            userfirstname: userfirstname.toUpperCase(),
-            userlastname: userlastname.toUpperCase(),
+            userfirst: userfirst.toUpperCase(),
+            userlast: userlast.toUpperCase(),
             userphone: userphone,
             useremail: useremail,
             username: username,
             password: password,
         });
-        res.redirect('/usercredentials');
+        res.redirect('/userinfo');
     } catch (error) {
-        console.error('Error deleting user:', error);
+        console.error('Error adding user:', error);
         res.status(500).send('Internal Server Error');
     }
 })
