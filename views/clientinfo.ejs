@@ -9,28 +9,36 @@
 <body>
     <h1>Client Information</h1>
 
-    <div class="container">    
-        <table>
-            <thead>
-                <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Zip Code</Code></th>
-                    <th>Status</th>
-                    <th>Building Type</th>
-                    <th>Service Type</th>
-                    <th>Price</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (clients && clients.length > 0) { %>
-                    <% clients.forEach(client => { %>
+    <div class="admin-button-container">
+        <form action="/addclient" method="get">
+            <button type="submit">Add Client</button>
+        </form>
+        <form action="/adminlanding" method="get">
+            <button type="submit">Admin Landing Page</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Pending Clients</h2>
+        <% if (pendingClients && pendingClients.length > 0) { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Zip Code</th>
+                        <th>Building Type</th>
+                        <th>Service Type</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% pendingClients.forEach(client => { %>
                         <tr>
                             <td><%= client.clientfirst %></td>
                             <td><%= client.clientlast %></td>
                             <td><%= client.clientzipcode %></td>
-                            <td><%= client.status === 'P' ? 'Pending' : 'Approved' %></td>
                             <td><%= client.buildingtype %></td>
                             <td><%= client.typename %></td>
                             <td><%= client.price %></td>
@@ -41,23 +49,49 @@
                             </td>
                         </tr>
                     <% }) %>
-                <% } else { %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p>There are no pending clients.</p>
+        <% } %>
+
+        <h2>Approved Clients</h2>
+        <% if (approvedClients && approvedClients.length > 0) { %>
+            <table>
+                <thead>
                     <tr>
-                        <td colspan="13">No client information available.</td>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Zip Code</th>
+                        <th>Building Type</th>
+                        <th>Service Type</th>
+                        <th>Price</th>
+                        <th>Next Transaction Date</th>
+                        <th>Actions</th>
                     </tr>
-                <% } %>
-            </tbody>
-        </table>
-    </div>
-
-
-    <div class="admin-button-container">
-        <form action="/addclient" method="get">
-            <button type="submit">Add Client</button>
-        </form>
-        <form action="/adminlanding" method="get">
-            <button type="submit">Admin Landing Page</button>
-        </form>
+                </thead>
+                <tbody>
+                    <% approvedClients.forEach(client => { %>
+                        <tr>
+                            <td><%= client.clientfirst %></td>
+                            <td><%= client.clientlast %></td>
+                            <td><%= client.clientzipcode %></td>
+                            <td><%= client.buildingtype %></td>
+                            <td><%= client.typename %></td>
+                            <td><%= client.price %></td>
+                            <td><%= client.nextTransactionDate ? new Date(client.nextTransactionDate).toLocaleDateString() : 'No Upcoming Cleaning' %></td>
+                            <td>
+                                <form action="/clientdetails/<%= client.clientid %>" method="get">
+                                    <button type="submit">See More</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p>There are no approved clients.</p>
+        <% } %>
     </div>
 
 </body>

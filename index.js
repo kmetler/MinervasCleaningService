@@ -204,43 +204,69 @@ app.get('/adminlanding', isAuthenticated, (req, res) => {
 // Go to client page
 app.get('/clientinfo', isAuthenticated, async (req, res) => {
     try {
-        const clients = await knex('client')
+        const currentDate = new Date();
+
+        const clientsQuery = knex('client')
             .join('services', 'client.serviceid', '=', 'services.serviceid')
             .join('type', 'services.typeid', '=', 'type.typeid')
             .join('building', 'services.buildingid', '=', 'building.buildingid')
+            .leftJoin('orders', function() {
+                this.on('client.clientid', '=', 'orders.clientid')
+                    .andOn('orders.transactiondate', '>', knex.raw('CURRENT_DATE'))
+            })
             .select(
                 'client.clientid',
                 'clientfirst',
                 'clientlast',
-                'clientstreetaddress',
-                'clientcity',
-                'clientstate',
                 'clientzipcode',
-                'clientphone',
-                'clientemail',
                 'status',
                 'buildingtype',
                 'typename',
-                'price',
+                'price'
             )
-            .orderBy('status', 'desc') // Order by status descending
-            .orderBy('clientlast', 'asc') // Then by last name ascending
-            .orderBy('clientfirst', 'asc'); // Finally by first name ascending
+            .min('orders.transactiondate as nextTransactionDate')
+            .groupBy(
+                'client.clientid',
+                'clientfirst',
+                'clientlast',
+                'clientzipcode',
+                'status',
+                'buildingtype',
+                'typename',
+                'price'
+            );
 
-        if (!clients || clients.length === 0) {
-            return res.status(404).send('No clients found');
-        }
+        const pendingClients = await clientsQuery.clone()
+            .where('status', 'P')
+            .orderBy('nextTransactionDate', 'asc')
+            .orderBy('clientlast', 'asc')
+            .orderBy('clientfirst', 'asc');
+
+        const approvedClients = await clientsQuery.clone()
+            .where('status', 'A')
+            .orderBy('nextTransactionDate', 'asc')
+            .orderBy('clientlast', 'asc')
+            .orderBy('clientfirst', 'asc');
 
         // Convert all client strings to proper case
-        clients.forEach(client => {
-            Object.keys(client).forEach(key => {
-                if (typeof client[key] === 'string' && key !== 'clientemail') {
-                    client[key] = toProperCase(client[key]);
-                }
+        const convertToProperCase = (clients) => {
+            return clients.map(client => {
+                Object.keys(client).forEach(key => {
+                    if (typeof client[key] === 'string' && key !== 'clientemail') {
+                        client[key] = toProperCase(client[key]);
+                    }
+                });
+                return client;
             });
-        });
+        };
 
-        res.render('clientinfo', { clients }); // Pass the entire array
+        const formattedPendingClients = convertToProperCase(pendingClients);
+        const formattedApprovedClients = convertToProperCase(approvedClients);
+
+        res.render('clientinfo', { 
+            pendingClients: formattedPendingClients, 
+            approvedClients: formattedApprovedClients 
+        });
     } catch (error) {
         console.error('Error querying database:', error);
         res.status(500).send('Internal Server Error');
