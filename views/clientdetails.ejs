@@ -5,74 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client Details</title>
     <style>
-        .section {
-            margin: 20px 0;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .delete-back-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        h2 {
-            text-align: center;
-        }
+        .unpaid { color: red; }
     </style>
 </head>
 <body>
-    <main>
-        <br>
-        <h1 style="text-align: center; font-size: 40px;">Client Details</h1>
-        <br>
+    <h1>Client Details</h1>
 
-        <!-- Client Information Section -->
-        <section class="section">
-            <h2>Client Information</h2>
-            <p><strong>First Name:</strong> <%= client.clientfirst %></p>
-            <p><strong>Last Name:</strong> <%= client.clientlast %></p>
-            <p><strong>Phone:</strong> <%= client.clientphone %></p>
-            <p><strong>Email:</strong> <%= client.clientemail %></p>
-            <p><strong>Street Address:</strong> <%= client.clientstreetaddress %></p>
-            <p><strong>City:</strong> <%= client.clientcity %></p>
-            <p><strong>State:</strong> <%= client.clientstate %></p>
-            <p><strong>Zip Code:</strong> <%= client.clientzipcode %></p>
-        </section>
+    <!-- Display client details -->
+    <div>
+        <p><strong>Name:</strong> <%= client.clientfirst %> <%= client.clientlast %></p>
+        <p><strong>Address:</strong> <%= client.clientstreetaddress %>, <%= client.clientcity %>, <%= client.clientstate %>, <%= client.clientzipcode %></p>
+        <p><strong>Phone:</strong> <%= client.clientphone %></p>
+        <p><strong>Email:</strong> <%= client.clientemail %></p>
+        <p><strong>Status:</strong> <%= client.status === 'P' ? 'Pending' : 'Approved' %></p>
+        <p><strong>Service:</strong> <%= client.typename %> - <%= client.typedescription %></p>
+        <p><strong>Building Type:</strong> <%= client.buildingtype %></p>
+        <p><strong>Price:</strong> $<%= client.price %></p>
+    </div>
 
-        <br>
+    <!-- Buttons for client actions -->
+    <button onclick="window.location.href='/editclient/<%= client.clientid %>';">Edit Client</button>
+    <button onclick="if(confirm('Are you sure you want to delete this client? This will delete all associated orders.')) { window.location.href='/deleteclient/<%= client.clientid %>'; }">Delete Client</button>
+    <button onclick="window.location.href='/clientinfo';">Back to Client Information</button>
 
-        <!-- Other Information Section -->
-        <section class="section">
-            <h2>Service Information</h2>
-            <p><strong>Transaction Date:</strong> <%= client.transactiondate %></p>
-            <p><strong>Frequency:</strong> <%= client.frequency %></p>
-            <p><strong>Building Type:</strong> <%= client.buildingtype %></p>
-            <p><strong>Service Type:</strong> <%= client.typename %></p>
-            <p><strong>Price:</strong> <%= client.price %></p>
-            <p><strong>Status:</strong> <%= client.status %></p>
-        </section>
+    <hr />
 
-        <br>
-
-        <!-- Action Buttons -->
-        <div class="delete-back-buttons">
-            <!-- Delete Button -->
-            <section>
-                <h2>Actions</h2>
-                <form action="/clientdetails/delete/<%= client.clientid %>" method="POST">
-                    <button type="submit" onclick="return confirm('Are you sure you want to delete this client?');">
-                        Delete Client
-                    </button>
-                </form>
-            </section>
-            
-
-            <!-- Back Button -->
-            <form action="/clientinfo" method="GET">
-                <button type="submit">Back to Client List</button>
-            </form>
-        </div>
-    </main>
+    <!-- Table for order details -->
+    <h2>Order History</h2>
+    <button onclick="window.location.href='/addorder/<%= client.clientid %>';">Add Order</button>
+    <table>
+        <thead>
+            <tr>
+                <th>Transaction ID</th>
+                <th>Date</th>
+                <th>Paid</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% orders.forEach(order => { %>
+                <tr>
+                    <td><%= order.transactionid %></td>
+                    <td><%= new Date(order.transactiondate).toLocaleDateString() %></td>
+                    <td class="<%= order.paid ? '' : 'unpaid' %>">
+                        <%= order.paid ? 'Yes' : 'No' %>
+                    </td>
+                    <td>
+                        <button onclick="window.location.href='/editorder/<%= order.orderid %>';">Edit</button>
+                        <button onclick="if(confirm('Are you sure you want to delete this order?')) { window.location.href='/deleteorder/<%= order.orderid %>'; }">Delete</button>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
 </body>
 </html>

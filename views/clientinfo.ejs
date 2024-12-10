@@ -13,12 +13,11 @@
             <tr>
                 <th>First Name</th>
                 <th>Last Name</th>
-                <th>Transaction Date</th>
-                <th>Frequency</th>
+                <th>Zip Code</Code></th>
+                <th>Status</th>
                 <th>Building Type</th>
                 <th>Service Type</th>
                 <th>Price</th>
-                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -28,12 +27,11 @@
                     <tr>
                         <td><%= client.clientfirst %></td>
                         <td><%= client.clientlast %></td>
-                        <td><%= client.transactiondate %></td>
-                        <td><%= client.frequency %></td>
+                        <td><%= client.clientzipcode %></td>
+                        <td><%= client.status === 'P' ? 'Pending' : 'Approved' %></td>
                         <td><%= client.buildingtype %></td>
                         <td><%= client.typename %></td>
                         <td><%= client.price %></td>
-                        <td><%= client.status %></td>
                         <td>
                             <form action="/clientdetails/<%= client.clientid %>" method="get">
                                 <button type="submit">See More</button>
@@ -43,7 +41,7 @@
                 <% }) %>
             <% } else { %>
                 <tr>
-                    <td colspan="9">No client information available.</td>
+                    <td colspan="13">No client information available.</td>
                 </tr>
             <% } %>
         </tbody>
