@@ -205,7 +205,6 @@ app.get('/adminlanding', isAuthenticated, (req, res) => {
 app.get('/clientinfo', isAuthenticated, async (req, res) => {
     try {
         const clients = await knex('client')
-            .leftJoin('orders', 'client.clientid', '=', 'orders.clientid')
             .join('services', 'client.serviceid', '=', 'services.serviceid')
             .join('type', 'services.typeid', '=', 'type.typeid')
             .join('building', 'services.buildingid', '=', 'building.buildingid')
@@ -526,24 +525,68 @@ app.get('/deleteclient/:clientid', isAuthenticated, async (req, res) => {
 });
 
 // go to add an order to a client
-app.get('/addorder/:clientid', isAuthenticated, async (req, res) => {
+app.get('/addorder/:clientid', async (req, res) => {
     const { clientid } = req.params;
 
     try {
-        res.render('addorder', { clientid });
+        // Fetch client details by ID
+        const client = await knex('client')
+            .select('clientid', 'clientfirst', 'clientlast')
+            .where('clientid', clientid)
+            .first();
+
+        if (!client) {
+            return res.status(404).send('Client not found');
+        }
+
+        // Render the addorder page with the client object
+        res.render('addorder', { client });
     } catch (error) {
-        console.error('Error displaying add order page:', error);
+        console.error('Error fetching client data for addorder:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// complete adding an order
+app.post('/addorder', async (req, res) => {
+    const { clientid, transactiondate, paid } = req.body;
+
+    try {
+        // Insert the new order into the orders table
+        await knex('orders').insert({
+            clientid,
+            transactiondate,
+            paid: paid === 'true' // Convert to boolean
+        });
+
+        // Redirect to the client's details page after adding the order
+        res.redirect(`/clientdetails/${clientid}`);
+    } catch (error) {
+        console.error('Error adding order:', error);
         res.status(500).send('Internal Server Error');
     }
 });
 
 // delete an individual order
-app.get('/deleteorder/:orderid', isAuthenticated, async (req, res) => {
-    const { orderid } = req.params;
+app.get('/deleteorder/:transactionid', isAuthenticated, async (req, res) => {
+    const { transactionid } = req.params;
 
     try {
-        await knex('orders').where('orderid', orderid).del();
-        res.redirect('back');
+        // First, fetch the clientid associated with this order
+        const order = await knex('orders')
+            .select('clientid')
+            .where('transactionid', transactionid)
+            .first();
+
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
+        // Delete the order
+        await knex('orders').where('transactionid', transactionid).del();
+
+        // Redirect to the client details page
+        res.redirect(`/clientdetails/${order.clientid}`);
     } catch (error) {
         console.error('Error deleting order:', error);
         res.status(500).send('Internal Server Error');
@@ -551,14 +594,14 @@ app.get('/deleteorder/:orderid', isAuthenticated, async (req, res) => {
 });
 
 // go to edit order page
-app.get('/editorder/:orderid', isAuthenticated, async (req, res) => {
-    const { orderid } = req.params;
+app.get('/editorder/:transactionid', isAuthenticated, async (req, res) => {
+    const { transactionid } = req.params; // Fix: Use req.params directly
 
     try {
         const order = await knex('orders')
             .join('client', 'orders.clientid', '=', 'client.clientid')
             .select('orders.*', 'client.clientid')
-            .where('orderid', orderid)
+            .where('orders.transactionid', transactionid) // Fix: Specify the table for transactionid
             .first();
 
         if (!order) {
@@ -573,19 +616,30 @@ app.get('/editorder/:orderid', isAuthenticated, async (req, res) => {
 });
 
 // finish updating the order
-app.post('/updateorder/:orderid', isAuthenticated, async (req, res) => {
-    const { orderid } = req.params;
+app.post('/updateorder/:transactionid', isAuthenticated, async (req, res) => {
+    const { transactionid } = req.params;
     const { transactiondate, paid } = req.body;
 
     try {
+        // Update the order
         await knex('orders')
-            .where('orderid', orderid)
+            .where('transactionid', transactionid)
             .update({
                 transactiondate: new Date(transactiondate),
                 paid: paid === 'true',
             });
 
-        res.redirect(`/clientdetails/${req.body.clientid}`);
+        // Fetch the clientid from the order
+        const order = await knex('orders')
+            .select('clientid')
+            .where('transactionid', transactionid)
+            .first();
+
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
+        res.redirect(`/clientdetails/${order.clientid}`);
     } catch (error) {
         console.error('Error updating order:', error);
         res.status(500).send('Internal Server Error');
