@@ -271,20 +271,18 @@ app.get('/clientinfo/search', isAuthenticated, async (req, res) => {
                 'price'
             );
 
-        // Dynamically adding the WHERE clause with case-insensitive search
-        clientsQuery.whereRaw('UPPER(client.clientfirst) LIKE UPPER(?)', [`%${searchTerm}%`])
-        .orWhereRaw('UPPER(client.clientlast) LIKE UPPER(?)', [`%${searchTerm}%`])
-        .orWhereRaw('UPPER(client.clientzipcode) LIKE UPPER(?)', [`%${searchTerm}%`]);
-
         console.log('Generated SQL Query:', clientsQuery.toString());
 
+        const searchTermFormatted = `%${searchTerm.toUpperCase()}%`;
+        
         // Fetch filtered clients (pending and approved)
-        let pendingClients = [];
-        let approvedClients = [];
+        //let pendingClients = [];
+        //let approvedClients = [];
 
-        try {
-           // Fetch pending clients (with status 'P')
-            pendingClients = await clientsQuery.clone()
+    
+        // Fetch pending clients (with status 'P')
+        let pendingClients = await clientsQuery
+            .clone()
             .where('status', 'P') // Pending status filter
             .andWhereRaw('UPPER(client.clientfirst) LIKE UPPER(?)', [`%${searchTerm}%`])
             .orWhereRaw('UPPER(client.clientlast) LIKE UPPER(?)', [`%${searchTerm}%`])
@@ -294,8 +292,9 @@ app.get('/clientinfo/search', isAuthenticated, async (req, res) => {
                 { column: 'clientfirst', order: 'asc' },
             ]);
 
-            // Fetch approved clients (with status 'A')
-            approvedClients = await clientsQuery.clone()
+        // Fetch approved clients (with status 'A')
+        let approvedClients = await clientsQuery
+            .clone()
             .where('status', 'A') // Approved status filter
             .andWhereRaw('UPPER(client.clientfirst) LIKE UPPER(?)', [`%${searchTerm}%`])
             .orWhereRaw('UPPER(client.clientlast) LIKE UPPER(?)', [`%${searchTerm}%`])
@@ -306,11 +305,6 @@ app.get('/clientinfo/search', isAuthenticated, async (req, res) => {
                 { column: 'clientfirst', order: 'asc' },
             ]);
 
-
-        } catch (error) {
-            console.error('Error querying client information:', error);
-            return res.status(500).send('We encountered an issue while querying the clients. Please try again later.');
-        }
 
         // Format the client data to Proper Case
         const formatClients = (clients) =>
