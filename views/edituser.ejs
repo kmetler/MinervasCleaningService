@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Edit User</title>
+    <link rel="stylesheet" href="/css/edituser.css">
 </head>
 <body>
-    <main>
+    <div class="container">
         <h1>Edit User</h1>
         <form action="/edituser/<%= user.userid %>" method="POST">
             <div class="form-group">
@@ -50,6 +51,6 @@
                 <button type="submit" class="cancel-button">Cancel</button>
             </form>
         </div>
-    </main>
+    </div>
 </body>
 </html>
