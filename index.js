@@ -213,12 +213,15 @@ app.post('/signupclient', async (req, res) => {
             });
         });
 
-        res.redirect('/'); // Redirect to the client list page after adding
+        res.redirect('/thankyou'); // Redirect to the client list page after adding
     } catch (error) {
         console.error('Error submitting client:', error);
         res.status(500).send('Internal Server Error');
     }
 });
+
+app.get("/thankyou", (req, res) => res.render ("thankyou"));
+  
 
 // ** Authenticated Routes **
 // Go to admin landing page
