@@ -150,6 +150,10 @@ button:hover {
     display: none;
 }
 
+.password-container:hover .password-placeholder {
+    display: none;
+}
+
 .password-container:hover .password-text {
     display: inline;
     color: #333;
