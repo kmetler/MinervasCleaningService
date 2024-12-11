@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minerva's Cleaning Service</title>
+    <link rel="icon" href="/images/logo.png" type="image/x-icon"> <!-- Update path to your logo -->
     <link rel="stylesheet" href="/css/styleslanding.css" type="text/css">
 </head>
 <body>
@@ -77,7 +78,7 @@
                         <p><strong>Select Building Type:</strong></p>
                         <ul>
                             <% group.buildings.forEach(building => { %>
-                                <li class="building-option" onclick="showPrice('<%= group.typename %>', '<%= building.buildingid %>', <%= building.price %>)">
+                                <li class="building-option" onclick="showPrice('<%= group.typename %>', '<%= building.buildingid %>', '<%= building.price %>')">
                                     <%= building.buildingtype %>
                                     <!-- Price Display for this Building -->
                                     <div id="price-display-<%= group.typename %>-<%= building.buildingid %>" class="price-display" style="display: none;">
