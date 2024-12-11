@@ -31,6 +31,15 @@ body {
     margin: 0;
 }
 
+.thing {
+    color: white;
+    text-decoration: none;
+}
+
+.thing:hover {
+    cursor: pointer;
+}
+
 .navbar ul {
     list-style: none;
     margin: 0;

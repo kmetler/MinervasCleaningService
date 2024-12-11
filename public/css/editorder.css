@@ -60,6 +60,15 @@ h1 {
     color:#2c3e50;
     margin-bottom: 1.5rem;
 }
+.thing {
+    color: white;
+    text-decoration: none;
+}
+
+.thing:hover {
+    cursor: pointer;
+}
+
 
 form {
     display: flex;
