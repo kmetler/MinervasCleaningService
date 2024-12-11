@@ -232,7 +232,7 @@ app.get('/adminlanding', isAuthenticated, (req, res) => {
 app.get('/clientinfo/search', isAuthenticated, async (req, res) => {
     try {
         const { searchTerm } = req.query; // Get the search term from query parameters
-        console.log('Search term:', searchTerm);
+        //console.log('Search term:', searchTerm);
 
         if (!searchTerm) {
             return res.render('clientinfo', { message: 'No search term provided' });
@@ -271,7 +271,7 @@ app.get('/clientinfo/search', isAuthenticated, async (req, res) => {
                 'price'
             );
 
-        console.log('Generated SQL Query:', clientsQuery.toString());
+        //console.log('Generated SQL Query:', clientsQuery.toString());
 
         const searchTermFormatted = `%${searchTerm.toUpperCase()}%`;
         
