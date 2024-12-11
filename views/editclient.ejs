@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="/css/editclient.css">
 </head>
 <body>
+    <div class="navbar">
+        <h1>Admin Panel</h1>
+        <ul>
+            <li><a href="/clientinfo">Client Info</a></li>
+            <li><a href="/userinfo">User Info</a></li>
+        </ul>
+    </div>
     <main>
         <h1>Edit Client Details</h1>
         <form action="/updateclient/<%= client.clientid %>" method="POST">
