@@ -229,10 +229,123 @@ app.get('/adminlanding', isAuthenticated, (req, res) => {
     res.render('adminlanding', { user: req.session.user }); // Authenticated landing page
 });
 
+app.get('/clientinfo/search', isAuthenticated, async (req, res) => {
+    try {
+        const { searchTerm } = req.query; // Get the search term from query parameters
+        console.log('Search term:', searchTerm);
+
+        if (!searchTerm) {
+            return res.render('clientinfo', { message: 'No search term provided' });
+        }
+
+        const currentDate = new Date();
+
+        // Base query to fetch clients
+        const clientsQuery = knex('client')
+            .join('services', 'client.serviceid', '=', 'services.serviceid')
+            .join('type', 'services.typeid', '=', 'type.typeid')
+            .join('building', 'services.buildingid', '=', 'building.buildingid')
+            .leftJoin('orders', function () {
+                this.on('client.clientid', '=', 'orders.clientid')
+                    .andOn('orders.transactiondate', '>', knex.raw('CURRENT_DATE'));
+            })
+            .select(
+                'client.clientid',
+                'clientfirst',
+                'clientlast',
+                'clientzipcode',
+                'status',
+                'buildingtype',
+                'typename',
+                'price'
+            )
+            .min('orders.transactiondate as nextTransactionDate') // Get the minimum future transaction date
+            .groupBy(
+                'client.clientid',
+                'clientfirst',
+                'clientlast',
+                'clientzipcode',
+                'status',
+                'buildingtype',
+                'typename',
+                'price'
+            );
+
+        // Dynamically adding the WHERE clause with case-insensitive search
+        clientsQuery.whereRaw('UPPER(client.clientfirst) LIKE UPPER(?)', [`%${searchTerm}%`])
+        .orWhereRaw('UPPER(client.clientlast) LIKE UPPER(?)', [`%${searchTerm}%`])
+        .orWhereRaw('UPPER(client.clientzipcode) LIKE UPPER(?)', [`%${searchTerm}%`]);
+
+        console.log('Generated SQL Query:', clientsQuery.toString());
+
+        // Fetch filtered clients (pending and approved)
+        let pendingClients = [];
+        let approvedClients = [];
+
+        try {
+           // Fetch pending clients (with status 'P')
+            pendingClients = await clientsQuery.clone()
+            .where('status', 'P') // Pending status filter
+            .andWhereRaw('UPPER(client.clientfirst) LIKE UPPER(?)', [`%${searchTerm}%`])
+            .orWhereRaw('UPPER(client.clientlast) LIKE UPPER(?)', [`%${searchTerm}%`])
+            .orWhereRaw('UPPER(client.clientzipcode) LIKE UPPER(?)', [`%${searchTerm}%`])
+            .orderBy([
+                { column: 'clientlast', order: 'asc' },
+                { column: 'clientfirst', order: 'asc' },
+            ]);
+
+            // Fetch approved clients (with status 'A')
+            approvedClients = await clientsQuery.clone()
+            .where('status', 'A') // Approved status filter
+            .andWhereRaw('UPPER(client.clientfirst) LIKE UPPER(?)', [`%${searchTerm}%`])
+            .orWhereRaw('UPPER(client.clientlast) LIKE UPPER(?)', [`%${searchTerm}%`])
+            .orWhereRaw('UPPER(client.clientzipcode) LIKE UPPER(?)', [`%${searchTerm}%`])
+            .orderBy([
+                { column: 'nextTransactionDate', order: 'asc' },
+                { column: 'clientlast', order: 'asc' },
+                { column: 'clientfirst', order: 'asc' },
+            ]);
+
+
+        } catch (error) {
+            console.error('Error querying client information:', error);
+            return res.status(500).send('We encountered an issue while querying the clients. Please try again later.');
+        }
+
+        // Format the client data to Proper Case
+        const formatClients = (clients) =>
+            clients.map((client) => {
+                const formattedClient = { ...client };
+                Object.keys(formattedClient).forEach((key) => {
+                    if (typeof formattedClient[key] === 'string' && key !== 'clientemail') {
+                        formattedClient[key] = toProperCase(formattedClient[key]);
+                    }
+                });
+                return formattedClient;
+            });
+
+        let formattedPendingClients = formatClients(pendingClients);
+        let formattedApprovedClients = formatClients(approvedClients);
+
+        // Render the clientinfo page with filtered clients
+        return res.render('clientinfo', {
+            pendingClients: formattedPendingClients || [],
+            approvedClients: formattedApprovedClients || [],
+            searchTerm: searchTerm // Pass the search term back to the view to keep it in the input field
+        });
+
+    } catch (error) {
+        console.error('Error querying client information:', error);
+        res.status(500).send('We encountered an issue while searching for clients. Please try again later.');
+    }
+});
+
 // Go to client page
 app.get('/clientinfo', isAuthenticated, async (req, res) => {
     try {
         const currentDate = new Date();
+
+        const searchTerm = req.body.searchTerm || "";
 
         const clientsQuery = knex('client')
             .join('services', 'client.serviceid', '=', 'services.serviceid')
@@ -292,7 +405,8 @@ app.get('/clientinfo', isAuthenticated, async (req, res) => {
 
         res.render('clientinfo', { 
             pendingClients: formattedPendingClients, 
-            approvedClients: formattedApprovedClients 
+            approvedClients: formattedApprovedClients,
+            searchTerm
         });
     } catch (error) {
         console.error('Error querying database:', error);

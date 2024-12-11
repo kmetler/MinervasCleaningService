@@ -27,6 +27,13 @@
 
     </div>
 
+    <div class="search-container">
+        <form action="/clientinfo/search" method="get">
+            <input type="text" name="searchTerm" placeholder="Search by Name or Zip" value="<%= searchTerm || '' %>">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
     <div class="container">
         <h2>Pending Clients</h2>
         <% if (pendingClients && pendingClients.length > 0) { %>
