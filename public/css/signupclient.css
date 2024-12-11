@@ -1,3 +1,11 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
 .container {
     max-width: 800px;
     margin: 2rem auto;
@@ -7,10 +15,66 @@
     border-radius: 8px;
 }
 
+header {
+    background-color: #5BB8C1;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+header .logo h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+nav a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+.login-button {
+    display: flex;
+    flex-direction: row;
+}
+
+.login-button button {
+    background-color: #5CA838;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    margin: 10px;
+}
+
+.login-button button:hover {
+    background-color: #3C8D32;
+}
+
 h1 {
     text-align: center;
     font-size: 2rem;
-    color: #5BB8C1;
+    color: #2c3e50;
     margin-bottom: 1.5rem;
 }
 

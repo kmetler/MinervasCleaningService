@@ -8,8 +8,31 @@
     <link rel="stylesheet" href="/css/signupclient.css">
 </head>
 <body>
+    <!-- Header Section -->
+    <header>
+        <div class="logo">
+            <h1>Minerva's Cleaning Service</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Who We Are</a></li>
+                <li><a href="/">Our Services</a></li>
+                <li><a href="/">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="login-button">
+            <form action="/login" method="get" class="login-button">
+                <button>Login</button>
+            </form>
+            <form action="/signupclient" method="get" class="login-button">
+                <button>Sign Up</button>
+            </form>
+           
+        </div>
+      
+    </header>
     <div class="container">
-        <h1>Add New Client</h1>
+        <h1>Sign Up</h1>
         <form action="/signupclient" method="POST">
             <section>
                 <h2>Client Information</h2>

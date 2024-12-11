@@ -13,33 +13,36 @@ html {
 body {
     background-color: #F9F9F9;
     color: #333;
+    line-height: 1.6;
 }
 
 header {
     background-color: #5BB8C1;
     color: white;
-    padding: 20px 40px;
+    padding: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
+    flex-direction: row;
 }
 
 header .logo h1 {
-    font-size: 36px;
+    font-size: 28px;
     font-weight: bold;
 }
 
 nav ul {
     list-style: none;
     display: flex;
-    gap: 20px;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
 nav a {
     text-decoration: none;
     color: white;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
 }
 
@@ -47,14 +50,21 @@ nav a:hover {
     text-decoration: underline;
 }
 
+.login-button {
+    display: flex;
+    flex-direction: row;
+}
+
 .login-button button {
     background-color: #5CA838;
     color: white;
     border: none;
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     border-radius: 5px;
+    transition: background-color 0.3s ease;
+    margin: 10px;
 }
 
 .login-button button:hover {
@@ -66,119 +76,87 @@ nav a:hover {
     background-color: #0E3C5C;
     color: white;
     text-align: center;
-    padding: 80px 20px;
+    padding: 100px 20px;
+  
 }
 
 #landing h2 {
-    font-size: 48px;
+    font-size: 36px;
     margin-bottom: 20px;
 }
 
 #landing p {
-    font-size: 20px;
+    font-size: 18px;
     margin-top: 10px;
 }
 
 /* Section Styles */
 .section {
-    padding: 60px 20px;
+    padding: 40px 20px;
     text-align: center;
 }
 
 .section h2 {
-    font-size: 32px;
+    font-size: 28px;
     margin-bottom: 20px;
 }
 
 .section p {
-    font-size: 18px;
+    font-size: 16px;
     margin-top: 10px;
 }
 
 .section a {
-    font-size: 18px;
+    font-size: 16px;
     margin-top: 10px;
-    color: #333
+    color: #5BB8C1;
+    text-decoration: none;
+}
+
+.section a:hover {
+    text-decoration: underline;
 }
 
 /* Services List */
 .services-list {
     list-style: none;
-    font-size: 18px;
-    padding: 0;
-}
-
-.services-list li {
-    padding: 10px;
-    background-color: #5BB8C1;
-    margin: 8px 0;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Footer */
-footer {
-    background-color: #0E3C5C;
-    color: white;
-    text-align: center;
-    padding: 20px;
     font-size: 16px;
+    padding: 0;
+    display: column;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    justify-content: center;
 }
 
-footer p {
-    margin-top: 10px;
+.service-item {
+    padding: 20px;
+    background-color: #5BB8C1;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin: 10px;
 }
 
-/* Media Queries for Responsiveness */
-@media (max-width: 768px) {
-    header {
-        flex-direction: column;
-        text-align: center;
-    }
-    nav ul {
-        flex-direction: column;
-        gap: 10px;
-    }
-    #landing h2 {
-        font-size: 36px;
-    }
-    #landing p {
-        font-size: 18px;
-    }
+.service-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
 }
-
-
-
-.price-display {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #f1f1f1;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-.price-display p {
-    font-weight: bold;
-    color: #333;
-    margin: 0;
-}
-
-
-
-
-
 
 .building-option {
     cursor: pointer;
     padding: 10px;
     margin: 5px 0;
-    background-color: #38B6FF;
+    background-color:  #0E3C5C;
     color: white;
     border-radius: 5px;
     text-align: center;
+    transition: background-color 0.3s ease;
 }
 
 .building-option:hover {
-    background-color: #0096FF;
+    background-color:  #204763;
 }
 
 .price-display {
@@ -191,3 +169,51 @@ footer p {
     color: #333;
 }
 
+/* Footer */
+footer {
+    background-color: #0E3C5C;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .login-button {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    nav ul {
+        flex-direction: row;
+        gap: 10px;
+    }
+    .service-item {
+        padding: 15px;
+    }
+    #landing h2 {
+        font-size: 28px;
+    }
+    #landing p {
+        font-size: 16px;
+    }
+    .login-button {
+        order: 3;
+    }
+    .logo {
+        order: 1;
+    }
+    nav {
+        order: 2;
+    }
+
+}

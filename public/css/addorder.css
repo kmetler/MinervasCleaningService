@@ -1,4 +1,12 @@
 
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
 .container {
     max-width: 800px;
     margin: 2rem auto;
@@ -50,7 +58,7 @@
 h1 {
     text-align: center;
     font-size: 2rem;
-    color: #5BB8C1;
+    color: #2c3e50;
     margin-bottom: 1.5rem;
 }
 
