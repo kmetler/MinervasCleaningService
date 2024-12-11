@@ -45,6 +45,9 @@
         <p>Minerva's Cleaning Service is a trusted cleaning company dedicated to providing top-notch services to our clients in Arlington and Washington, D.C. Our team is committed to delivering a spotless, safe, and hygienic environment in your home or business.</p>
     </section>
 
+
+
+
     <!-- Services Section -->
     <section id="services" class="section">
         <h2>Our Services</h2>
@@ -76,10 +79,10 @@
                         <p><strong>Select Building Type:</strong></p>
                         <ul>
                             <% group.buildings.forEach(building => { %>
-                                <li class="building-option" onclick="showPrice('<%= group.typename %>', '<%= building.buildingid %>', '<%= building.price %>')">
+                                <li class="building-option" onclick="showPrice('<%= group.typename %>', '<%= building.buildingid %>', <%= building.price %>)">
                                     <%= building.buildingtype %>
                                     <!-- Price Display for this Building -->
-                                    <div id="price-display-<%= group.typename %>-<%= building.buildingid %>" class="price-display" style="display: none;">
+                                    <div id="price-display-<%= group.typename %>-<%= building.buildingid %>" class="price-display" style="display: none; margin-top: 5px;">
                                         <p id="price-text-<%= group.typename %>-<%= building.buildingid %>"></p>
                                     </div>
                                 </li>
@@ -91,74 +94,81 @@
         </ul>
     </section>
     
-    <script>
-        let currentlyOpenService = null; // Keep track of the currently opened service
+    
 
-        function toggleDetails(serviceName) {
+
+    <script>
+    let currentlyOpenService = null; // Keep track of the currently opened service
+
+    function toggleDetails(serviceName) {
         const details = document.getElementById(`details-${serviceName}`);
         const priceDisplaySections = document.querySelectorAll(`[id^="price-display-${serviceName}"]`); // All price displays for this service
 
-            // If another service is open, collapse it
-            if (currentlyOpenService && currentlyOpenService !== serviceName) {
-                const openDetails = document.getElementById(`details-${currentlyOpenService}`);
-                const openPriceDisplays = document.querySelectorAll(`[id^="price-display-${currentlyOpenService}"]`);
-                
-                // Collapse the currently open service
-                openDetails.style.display = "none";
+        // If another service is open, collapse it
+        if (currentlyOpenService && currentlyOpenService !== serviceName) {
+            const openDetails = document.getElementById(`details-${currentlyOpenService}`);
+            const openPriceDisplays = document.querySelectorAll(`[id^="price-display-${currentlyOpenService}"]`);
+            
+            // Collapse the currently open service
+            openDetails.style.display = "none";
 
-                // Hide all price displays for the previous service
-                openPriceDisplays.forEach(priceDisplay => {
-                    priceDisplay.style.display = "none";
-                    const priceText = priceDisplay.querySelector("p");
-                    if (priceText) priceText.textContent = ""; // Clear the price text
-                });
+            // Hide all price displays for the previous service
+            openPriceDisplays.forEach(priceDisplay => {
+                priceDisplay.style.display = "none";
+                const priceText = priceDisplay.querySelector("p");
+                if (priceText) priceText.textContent = ""; // Clear the price text
+            });
 
-                currentlyOpenService = null; // Reset the tracker
-            }
-
-            // Toggle the current service
-            if (details.style.display === "none" || details.style.display === "") {
-                details.style.display = "block"; // Expand the current service
-                currentlyOpenService = serviceName; // Update the tracker
-            } else {
-                details.style.display = "none"; // Collapse the current service
-                
-                // Reset price displays for this service
-                priceDisplaySections.forEach(priceDisplay => {
-                    priceDisplay.style.display = "none";
-                    const priceText = priceDisplay.querySelector("p");
-                    if (priceText) priceText.textContent = ""; // Clear the price text
-                });
-
-                currentlyOpenService = null; // Reset tracker since it's collapsed
-            }
+            currentlyOpenService = null; // Reset the tracker
         }
 
-        function showPrice(serviceName, buildingId, price) {
-            // ensure price is a number
-            if (isNaN(price)) {
-                console.error(`Invalid Price: ${price}`);
-                return;
-            }
+        // Toggle the current service
+        if (details.style.display === "none" || details.style.display === "") {
+            details.style.display = "block"; // Expand the current service
+            currentlyOpenService = serviceName; // Update the tracker
+        } else {
+            details.style.display = "none"; // Collapse the current service
+            
+            // Reset price displays for this service
+            priceDisplaySections.forEach(priceDisplay => {
+                priceDisplay.style.display = "none";
+                const priceText = priceDisplay.querySelector("p");
+                if (priceText) priceText.textContent = ""; // Clear the price text
+            });
 
-            // Hide all price displays for the current service
-            const allPriceDisplays = document.querySelectorAll(`[id^="price-display-${serviceName}"]`);
-            allPriceDisplays.forEach(priceDisplay => priceDisplay.style.display = "none");
-
-            // Show the price for the selected building type
-            const priceDisplay = document.getElementById(`price-display-${serviceName}-${buildingId}`);
-            const priceText = document.getElementById(`price-text-${serviceName}-${buildingId}`);
-            if (priceDisplay && priceText) {
-                priceText.textContent = `Price: $${price.toFixed(2)}`;
-                priceDisplay.style.display = "block";
-            }
-            else {
-                console.error(`Could not find elements for service: ${serviceName}, building: ${buildingId}`);
-            }
+            currentlyOpenService = null; // Reset tracker since it's collapsed
         }
+    }
+
+    function showPrice(serviceName, buildingId, price) {
+        // Ensure price is a number
+        const parsedPrice = parseFloat(price);
+        if (isNaN(parsedPrice)) {
+            console.error(`Invalid Price: ${price}`);
+            return;
+        }
+
+        // Hide all price displays for the current service
+        const allPriceDisplays = document.querySelectorAll(`[id^="price-display-${serviceName}"]`);
+        allPriceDisplays.forEach(priceDisplay => priceDisplay.style.display = "none");
+
+        // Show the price for the selected building type
+        const priceDisplay = document.getElementById(`price-display-${serviceName}-${buildingId}`);
+        const priceText = document.getElementById(`price-text-${serviceName}-${buildingId}`);
+        if (priceDisplay && priceText) {
+            priceText.textContent = `Price: $${parsedPrice.toFixed(2)}`;
+            priceDisplay.style.display = "block";
+        } else {
+            console.error(`Could not find elements for service: ${serviceName}, building: ${buildingId}`);
+        }
+    }
+
     </script>
     
     
+
+
+
     <!-- Contact Section -->
     <section id="contact" class="section">
         <h2>Contact Us</h2>
