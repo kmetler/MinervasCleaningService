@@ -61,6 +61,15 @@ h1 {
     color:#2c3e50;
 }
 
+.thing {
+    color: white;
+    text-decoration: none;
+}
+
+.thing:hover {
+    cursor: pointer;
+}
+
 h2 {
     font-size: 1.5rem;
     color: #5BB8C1;

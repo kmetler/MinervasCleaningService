@@ -33,6 +33,15 @@ body, html {
     gap: 1.5rem; /* Space between nav items */
 }
 
+.thing {
+    color: white;
+    text-decoration: none;
+}
+
+.thing:hover {
+    cursor: pointer;
+}
+
 .navbar ul li a {
     text-decoration: none;
     color: white;

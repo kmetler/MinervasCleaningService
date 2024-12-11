@@ -60,6 +60,14 @@ body {
     flex-direction: column;
     align-items: center;
 }
+.thing {
+    color: white;
+    text-decoration: none;
+}
+
+.thing:hover {
+    cursor: pointer;
+}
 
 /* Details Card */
 .details-card {

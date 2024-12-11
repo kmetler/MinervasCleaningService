@@ -15,6 +15,16 @@
     border-radius: 8px;
 }
 
+.thing {
+    color: white;
+    text-decoration: none;
+}
+
+.thing:hover {
+    cursor: pointer;
+}
+
+
 /* Navigation Bar */
 .navbar {
     background-color: #5BB8C1; /* Professional dark blue-gray */

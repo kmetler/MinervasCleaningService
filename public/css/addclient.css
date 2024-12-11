@@ -53,6 +53,15 @@ main {
     border-radius: 8px;
 }
 
+.thing {
+    color: white;
+    text-decoration: none;
+}
+
+.thing:hover {
+    cursor: pointer;
+}
+
 h1 {
     text-align: center;
     font-size: 2.5rem;
