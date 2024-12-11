@@ -9,7 +9,7 @@ sudo nginx -t
 sudo systemctl restart nginx
 
 # Run Certbot to obtain an SSL certificate
-sudo certbot -n -d encrypttest.us-east-1.elasticbeanstalk.com --nginx --agree-tos --email ksmetler@gmail.com
+sudo certbot -n -d minervascleaningservice.us-east-1.elasticbeanstalk.com --nginx --agree-tos --email ksmetler@gmail.com
 sudo certbot -n -d minervascleaningservice.is404.net --nginx --agree-tos --email ksmetler@gmail.com
 
 # Restart Nginx again to apply the new certificate
