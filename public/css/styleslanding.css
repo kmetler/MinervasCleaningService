@@ -80,6 +80,39 @@ nav a:hover {
   
 }
 
+.landing-section {
+    position: relative;
+    height: 80vh; /* Full viewport height */
+    background-image: url('/images/cleaningpicture1.jpg'); /* Replace with your image URL */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+}
+
+.landing-section .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+    z-index: 1; /* Ensures overlay appears above the background */
+}
+
+.landing-section h1,
+.landing-section p {
+    position: relative;
+    z-index: 2; /* Ensures text appears above the overlay */
+    margin: 0;
+    padding: 0 20px;
+    font-family: 'Arial', sans-serif; /* Replace with your preferred font */
+}
+
+
 /* Divider */
 .divider {
     border: 0;
