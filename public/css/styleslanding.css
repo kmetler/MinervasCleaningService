@@ -124,7 +124,7 @@ nav a:hover {
 .services-list {
     list-style: none;
     font-size: 16px;
-    padding: 0;
+    padding: 0px;
     display: column;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
@@ -139,6 +139,8 @@ nav a:hover {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     margin: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 .service-item:hover {
@@ -146,10 +148,6 @@ nav a:hover {
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
     cursor: pointer;
 }
-
-
-
-
 
 .building-option {
     cursor: pointer;
@@ -160,6 +158,8 @@ nav a:hover {
     border-radius: 5px;
     text-align: center;
     transition: background-color 0.3s ease;
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 .building-option:hover {
@@ -167,16 +167,15 @@ nav a:hover {
 }
 
 .price-display {
-    margin-top: 5px;
     padding: 10px;
-    background-color: #f1f1f1;
+    background-color: #efe5e5;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-weight: bold;
     color: #333;
+    margin-left: 40px;
+    margin-right: 40px;
 }
-
-
 
 
 /* Footer */

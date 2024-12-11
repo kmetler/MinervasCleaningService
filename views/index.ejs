@@ -79,13 +79,13 @@
                         <p><strong>Select Building Type:</strong></p>
                         <ul>
                             <% group.buildings.forEach(building => { %>
-                                <li class="building-option" onclick="showPrice('<%= group.typename %>', '<%= building.buildingid %>', '<%= building.price %>')">
+                                <p class="building-option" onclick="showPrice('<%= group.typename %>', '<%= building.buildingid %>', '<%= building.price %>')">
                                     <%= building.buildingtype %>
                                     <!-- Price Display for this Building -->
                                     <div id="price-display-<%= group.typename %>-<%= building.buildingid %>" class="price-display" style="display: none; margin-top: 5px;">
                                         <p id="price-text-<%= group.typename %>-<%= building.buildingid %>"></p>
                                     </div>
-                                </li>
+                                </p>
                             <% }); %>
                         </ul>
                     </div>
