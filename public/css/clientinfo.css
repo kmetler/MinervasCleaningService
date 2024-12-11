@@ -24,6 +24,8 @@ h1 {
     background-color: #ffffff; /* Clean white background */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    overflow-x: auto;
+    white-space: nowrap;
 }
 
 /* Table Styles */
@@ -56,6 +58,8 @@ tbody tr:hover {
 td, th {
     padding: 0.75rem;
     border: 1px solid #ddd;
+
+    min-width: 100px;
 }
 
 /* Actions Button */
