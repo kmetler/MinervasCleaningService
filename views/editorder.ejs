@@ -4,28 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Order</title>
+    <link rel="stylesheet" href="/css/editorder.css">
 </head>
 <body>
-    <h1>Edit Order</h1>
+    <div class="container">
+        <h1>Edit Order</h1>
 
-    <!-- Form to edit order details -->
-    <form action="/updateorder/<%= order.transactionid %>" method="POST">
-        <input type="hidden" name="clientid" value="<%= order.clientid %>">
-        <label for="transactiondate">Transaction Date:</label>
-        <input type="date" id="transactiondate" name="transactiondate" value="<%= order.transactiondate.toISOString().split('T')[0] %>" required>
-        <br />
+        <!-- Form to edit order details -->
+        <form action="/updateorder/<%= order.transactionid %>" method="POST">
+            <input type="hidden" name="clientid" value="<%= order.clientid %>">
+            
+            <div>
+                <label for="transactiondate">Transaction Date:</label>
+                <input type="date" id="transactiondate" name="transactiondate" value="<%= order.transactiondate.toISOString().split('T')[0] %>" required>
+            </div>
 
-        <label for="paid">Paid:</label>
-        <select id="paid" name="paid">
-            <option value="true" <%= order.paid ? 'selected' : '' %>>Yes</option>
-            <option value="false" <%= !order.paid ? 'selected' : '' %>>No</option>
-        </select>
-        <br />
+            <div>
+                <label for="paid">Paid:</label>
+                <select id="paid" name="paid">
+                    <option value="true" <%= order.paid ? 'selected' : '' %>>Yes</option>
+                    <option value="false" <%= !order.paid ? 'selected' : '' %>>No</option>
+                </select>
+            </div>
+           
 
-        <button type="submit">Save Changes</button>
-    </form>
+            <button type="submit">Save Changes</button>
+        </form>
 
-    <!-- Button to return to client details -->
-    <button onclick="window.location.href='/clientdetails/<%= order.clientid %>';">Back to Client Details</button>
+        <!-- Button to return to client details -->
+        <button onclick="window.location.href='/clientdetails/<%= order.clientid %>';">Back to Client Details</button>
+    </div>
+    
 </body>
 </html>

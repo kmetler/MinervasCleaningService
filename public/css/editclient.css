@@ -1,0 +1,100 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #F7F9FA;
+    color: #333;
+}
+
+main {
+    margin: 2rem auto;
+    padding: 1rem;
+    max-width: 800px;
+    background-color: #fff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #5BB8C1;
+}
+
+h2 {
+    font-size: 1.5rem;
+    color: #5BB8C1;
+    border-bottom: 2px solid #5BB8C1;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+section {
+    padding: 1rem;
+    background-color: #F0F4F8;
+    border-radius: 8px;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #CCC;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+input:focus, select:focus {
+    border-color: #5BB8C1;
+    outline: none;
+    box-shadow: 0px 0px 3px rgba(91, 184, 193, 0.8);
+}
+
+button {
+    background-color: #5BB8C1;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #489A9E;
+}
+
+button[type="button"] {
+    background-color: #AAA;
+}
+
+button[type="button"]:hover {
+    background-color: #888;
+}
+
+@media (max-width: 600px) {
+    main {
+        margin: 1rem;
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.25rem;
+    }
+}
