@@ -44,7 +44,10 @@
             <!-- Buttons for client actions -->
             <button onclick="window.location.href='/editclient/<%= client.clientid %>';">Edit Client</button>
             <button onclick="if(confirm('Are you sure you want to delete this client? This will delete all associated orders.')) { window.location.href='/deleteclient/<%= client.clientid %>'; }">Delete Client</button>
-            <button onclick="window.location.href='/clientinfo';">Back to Client Information</button>
+        </div>
+        <br>
+        <div>
+            <button class="tealbutton" onclick="window.location.href='/clientinfo';">Back to Client Information</button>
         </div>
 
         

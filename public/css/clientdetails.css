@@ -69,6 +69,53 @@ body {
     cursor: pointer;
 }
 
+.container button {
+    margin-bottom: 1rem;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease; 
+}
+
+.container button:hover {
+    background-color: #435b72;
+}
+
+.container .greenbutton {
+    margin-bottom: 1rem;
+    background-color: #5CA838;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease; 
+}
+.container .greenbutton:hover {
+    background-color: #3C8D32;
+}
+
+.container .tealbutton {
+    margin-bottom: 1rem;
+    background-color: #5BB8C1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.container .tealbutton:hover {
+    background-color: #428389;
+}
+
 /* Details Card */
 .details-card {
     background-color: #ffffff;
@@ -130,7 +177,7 @@ body {
 
 .order-history .add-order {
     margin-bottom: 1rem;
-    background-color: #3C8D32;
+    background-color: #5BB8C1;
     color: white;
     border: none;
     border-radius: 5px;
@@ -141,7 +188,23 @@ body {
 }
 
 .order-history .add-order:hover {
+    background-color: #428389;
+}
+
+.order-history .add-ordergreen {
+    margin-bottom: 1rem;
     background-color: #5CA838;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.order-history .add-ordergreen:hover {
+    background-color: #3C8D32;
 }
 
 /* Table Styling */
